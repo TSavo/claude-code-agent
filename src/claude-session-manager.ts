@@ -561,17 +561,29 @@ For this conversation, you will roleplay as this character. When I ask "What is 
               case 'user':
                 if (!this.config.suppressConsoleOutput) {
                   console.log(chalk.cyan(`📋 ${agentName || 'Claude'} tool results received`));
-                  console.log('DEBUG jsonData:', JSON.stringify(jsonData, null, 2));
                 }
-                // Emit tool result event
-                if (eventHandler && jsonData.content) {
-                  const event = {
-                    type: 'tool_result',
-                    agentName: agentName || 'Claude',
-                    data: jsonData
-                  };
-                  console.log('DEBUG emitting tool_result event:', JSON.stringify(event, null, 2));
-                  eventHandler(event);
+                
+                // Debug logging to file
+                const fs = require('fs');
+                const debugMsg = `[${new Date().toISOString()}] USER EVENT: ${JSON.stringify(jsonData, null, 2)}\n`;
+                fs.appendFileSync('/tmp/tool-result-debug.log', debugMsg);
+                
+                // Emit tool result event - check for tool result content
+                if (eventHandler && jsonData.message && jsonData.message.content) {
+                  const content = jsonData.message.content;
+                  if (Array.isArray(content) && content.length > 0 && content[0].type === 'tool_result') {
+                    const event = {
+                      type: 'tool_result',
+                      agentName: agentName || 'Claude',
+                      data: {
+                        content: content[0].content,
+                        tool_use_id: content[0].tool_use_id
+                      }
+                    };
+                    const eventMsg = `[${new Date().toISOString()}] EMITTING tool_result: ${JSON.stringify(event, null, 2)}\n`;
+                    fs.appendFileSync('/tmp/tool-result-debug.log', eventMsg);
+                    eventHandler(event);
+                  }
                 }
                 // Store user message/tool results
                 if (sessionId) {
