@@ -223,6 +223,7 @@ app.post('/api/agents', async (req, res) => {
           tool_name: event.data.name,
           description: event.data.description,
           input: event.data.input,
+          tool_use_id: event.data.tool_use_id,
           color: agentData.color
         });
       } else if (event.type === 'tool_result') {
@@ -232,6 +233,7 @@ app.post('/api/agents', async (req, res) => {
           type: 'tool_result',
           agent: name,
           content: event.data.content,
+          tool_use_id: event.data.tool_use_id,
           color: agentData.color
         });
       }
@@ -392,6 +394,7 @@ app.post('/api/message/:agentName', async (req, res) => {
           tool_name: event.data.name,
           description: event.data.description,
           input: event.data.input,
+          tool_use_id: event.data.tool_use_id,
           color: agent.color
         });
       } else if (event.type === 'tool_result') {
@@ -401,6 +404,7 @@ app.post('/api/message/:agentName', async (req, res) => {
           type: 'tool_result',
           agent: agentName,
           content: event.data.content,
+          tool_use_id: event.data.tool_use_id,
           color: agent.color
         });
       }

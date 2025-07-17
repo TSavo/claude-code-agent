@@ -147,6 +147,19 @@
             font-size: 0.9rem;
             color: #e5e5e5;
         }
+        .tool-status {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #2a2a2a;
+            border-radius: 4px;
+            border-left: 3px solid #f59e0b;
+        }
+        .tool-result-section {
+            border-left: 3px solid #10B981;
+            background: #1a2e1a;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
         .message-header { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem; }
         
         /* Mobile Responsive Layout */
@@ -304,6 +317,7 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
         let agents = [];
         let globalEventSource = null;
         let pendingDeleteAgent = null;
+        let toolMessages = new Map(); // Track tool messages by tool_use_id
 
         loadAgents();
         loadChatHistory();
@@ -366,11 +380,11 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                 if (data.type === 'message') {
                     addMessage(data.content, 'assistant', data.color, data.agent);
                 } else if (data.type === 'tool_use') {
-                    addToolUseMessage(data.tool_name, data.description, data.input, data.color, data.agent);
+                    addToolUseMessage(data.tool_name, data.description, data.input, data.tool_use_id, data.color, data.agent);
                 } else if (data.type === 'user_message') {
                     addMessage(data.content, 'user', data.color, data.agent);
                 } else if (data.type === 'tool_result') {
-                    addToolResultMessage(data.content, data.color, data.agent);
+                    updateToolMessageWithResult(data.tool_use_id, data.content, data.color, data.agent);
                 }
             };
 
@@ -604,10 +618,11 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             }
         }
 
-        function addToolUseMessage(toolName, description, input, color, agentName) {
+        function addToolUseMessage(toolName, description, input, toolUseId, color, agentName) {
             const chatArea = document.getElementById('chatArea');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message tool-use';
+            messageDiv.setAttribute('data-tool-use-id', toolUseId);
             
             // Set the agent's color as background for tool use messages
             if (color) {
@@ -633,18 +648,70 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                 <div class="message-header" style="color: ${color || '#f59e0b'}">
                     🔧 ${displayName} • ${timestamp}
                 </div>
-                <div>
+                <div class="tool-content">
                     <strong>Using tool:</strong> ${toolName}<br>
                     <em>${description}</em>
                     ${inputDisplay}
+                    <div class="tool-status">⏳ Executing...</div>
                 </div>
             `;
+            
+            // Track this message for later updates
+            toolMessages.set(toolUseId, messageDiv);
             
             chatArea.appendChild(messageDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        function addToolResultMessage(content, color, agentName) {
+        function updateToolMessageWithResult(toolUseId, content, color, agentName) {
+            const messageDiv = toolMessages.get(toolUseId);
+            if (!messageDiv) {
+                // If we don't have the original tool use message, create a standalone result
+                addStandaloneToolResult(content, color, agentName);
+                return;
+            }
+            
+            // Update the existing message with the result
+            const toolContent = messageDiv.querySelector('.tool-content');
+            const toolStatus = messageDiv.querySelector('.tool-status');
+            
+            // Format the tool result content
+            let resultDisplay = '';
+            if (typeof content === 'string') {
+                resultDisplay = content;
+            } else if (content && typeof content === 'object') {
+                resultDisplay = JSON.stringify(content, null, 2);
+            } else {
+                resultDisplay = String(content);
+            }
+            
+            // Update the status with the result
+            if (resultDisplay.trim()) {
+                toolStatus.innerHTML = `
+                    <div class="tool-result-section">
+                        <strong>✅ Result:</strong>
+                        <div class="tool-details">
+                            <pre class="tool-output">${resultDisplay}</pre>
+                        </div>
+                    </div>
+                `;
+            } else {
+                toolStatus.innerHTML = '<div class="tool-result-section"><strong>✅ Completed</strong></div>';
+            }
+            
+            // Change the header icon to show completion
+            const header = messageDiv.querySelector('.message-header');
+            header.innerHTML = header.innerHTML.replace('🔧', '✅');
+            
+            // Remove from tracking since it's now complete
+            toolMessages.delete(toolUseId);
+            
+            // Scroll to show the updated message
+            const chatArea = document.getElementById('chatArea');
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        function addStandaloneToolResult(content, color, agentName) {
             const chatArea = document.getElementById('chatArea');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message tool-result';

@@ -523,7 +523,8 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                               type: 'tool_use', 
                               name: item.name,
                               input: item.input,
-                              description: item.input?.description || 'Executing tool'
+                              description: item.input?.description || 'Executing tool',
+                              tool_use_id: (item as any).id
                             }
                           };
                           eventHandler(event);
