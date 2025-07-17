@@ -7,6 +7,7 @@
     "dev": "tsx src/claude-multi-chat-termkit.ts",
     "start": "tsx src/claude-multi-chat-termkit.ts",
     "tui": "tsx src/claude-multi-chat-termkit.ts",
+    "web": "node web-server.js",
     "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
@@ -16,6 +17,7 @@
   "dependencies": {
     "@types/terminal-kit": "^2.5.7",
     "chalk": "^5.4.1",
+    "express": "^4.18.2",
     "terminal-kit": "^3.1.2"
   },
   "devDependencies": {

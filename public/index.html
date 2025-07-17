@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Multi-Agent Web</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a1a;
+            color: #e5e5e5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: #2a2a2a;
+            border-right: 1px solid #444;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .agents-header {
+            padding: 1rem;
+            border-bottom: 1px solid #444;
+            font-weight: 600;
+        }
+        
+        .agents-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        
+        .agent {
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        
+        .agent:hover { background: #3a3a3a; }
+        .agent.active { background: #4a4a4a; }
+        
+        .agent-name { font-weight: 500; }
+        .agent-id { font-size: 0.8rem; opacity: 0.6; }
+        .agent-actions {
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+        }
+        
+        .agent-delete { 
+            color: #ef4444; 
+            cursor: pointer; 
+            padding: 0.25rem;
+            border-radius: 3px;
+            font-size: 1.2rem;
+        }
+        .agent-delete:hover { background: #ef444420; }
+        
+        .color-picker {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        
+        .color-picker::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+        
+        .create-agent {
+            padding: 1rem;
+            border-top: 1px solid #444;
+        }
+        
+        .create-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        input {
+            background: #3a3a3a;
+            border: 1px solid #555;
+            color: #e5e5e5;
+            padding: 0.5rem;
+            border-radius: 4px;
+            flex: 1;
+        }
+        
+        button {
+            background: #3B82F6;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        button:hover { background: #2563EB; }
+        button:disabled { background: #555; cursor: not-allowed; }
+        
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            padding: 1rem;
+            background: #2a2a2a;
+            border-bottom: 1px solid #444;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .create-agent-inline {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .create-agent-inline input {
+            width: 120px;
+            padding: 0.4rem;
+            font-size: 0.9rem;
+        }
+        
+        .create-agent-inline button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: #3a3a3a;
+            margin-left: auto;
+        }
+        
+        .message.assistant {
+            background: var(--agent-color, #2a4a2a);
+        }
+        
+        .message.system {
+            background: #2a2a4a;
+            border-left: 3px solid #6366f1;
+            font-style: italic;
+        }
+        
+        .message-header {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .input-area {
+            padding: 1rem;
+            border-top: 1px solid #444;
+            background: #2a2a2a;
+        }
+        
+        .input-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .message-input {
+            flex: 1;
+            resize: none;
+            min-height: 40px;
+            max-height: 120px;
+        }
+        
+        .status {
+            padding: 0.5rem;
+            background: #4a4a4a;
+            text-align: center;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #444;
+        }
+        
+        .status.error { background: #7f1d1d; }
+        .status.success { background: #166534; }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background: #2a2a2a;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-width: 300px;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ef4444;
+        }
+        
+        .modal-body {
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        
+        .modal-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            min-width: 80px;
+        }
+        
+        .modal-button.cancel {
+            background: #555;
+            color: #e5e5e5;
+        }
+        
+        .modal-button.cancel:hover {
+            background: #666;
+        }
+        
+        .modal-button.confirm {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .modal-button.confirm:hover {
+            background: #dc2626;
+        }
+        
+        .agent-info {
+            background: #1a1a1a;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            border-left: 3px solid var(--agent-color);
+        }
+        
+        .agent-info .agent-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .agent-info .agent-details {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">Ready</div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="agents-header">🤖 Agents</div>
+            <div class="agents-list" id="agentsList"></div>
+        </div>
+        
+        <div class="main">
+            <div class="chat-header">
+                <span id="chatHeader">Select an agent</span>
+                <div class="create-agent-inline">
+                    <input type="text" id="agentName" placeholder="Agent name" />
+                    <input type="text" id="agentRole" placeholder="Role/prompt" />
+                    <button onclick="createAgent()">Create</button>
+                </div>
+            </div>
+            <div class="chat-area" id="chatArea"></div>
+            <div class="input-area">
+                <div class="input-form">
+                    <textarea id="messageInput" class="message-input" placeholder="Type your message or /create 'name' role..." 
+                             onkeydown="handleKeyDown(event)"></textarea>
+                    <button onclick="sendMessage()" id="sendButton">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">⚠️ Delete Agent</div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this agent?</p>
+                <div id="agentInfoCard" class="agent-info">
+                    <div class="agent-name"></div>
+                    <div class="agent-details"></div>
+                </div>
+                <p><strong>This action cannot be undone.</strong> All chat history from this agent will remain, but you won't be able to send new messages to them.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button class="modal-button confirm" onclick="confirmDelete()">Delete Agent</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAgent = null;
+        let agents = [];
+        let globalEventSource = null; // Single stream for all agents
+        let pendingDeleteAgent = null; // Agent waiting for deletion confirmation
+
+        // Load everything on startup
+        loadAgents();
+        loadChatHistory();
+        loadPreferences();
+        connectToGlobalStream();
+
+        async function loadAgents() {
+            try {
+                const response = await fetch('/api/agents');
+                agents = await response.json();
+                renderAgents();
+            } catch (error) {
+                showStatus('Failed to load agents', 'error');
+            }
+        }
+
+        async function loadChatHistory() {
+            try {
+                const response = await fetch('/api/chat-history');
+                const history = await response.json();
+                
+                // Clear existing chat display first
+                const chatArea = document.getElementById('chatArea');
+                chatArea.innerHTML = '';
+                
+                // Display all historical messages
+                history.forEach(msg => {
+                    if (msg.type === 'user') {
+                        addMessage(msg.content, 'user', null, null, false);
+                    } else if (msg.type === 'assistant') {
+                        addMessage(msg.content, 'assistant', msg.color, msg.agent, false);
+                    }
+                });
+                
+                console.log('Loaded chat history:', history.length, 'messages');
+            } catch (error) {
+                console.error('Failed to load chat history:', error);
+            }
+        }
+
+        async function loadPreferences() {
+            try {
+                const response = await fetch('/api/preferences');
+                const prefs = await response.json();
+                
+                // Auto-select last selected agent if it exists
+                if (prefs.lastSelectedAgent && agents.find(a => a.name === prefs.lastSelectedAgent)) {
+                    selectAgent(prefs.lastSelectedAgent);
+                }
+                
+                console.log('Loaded preferences:', prefs);
+            } catch (error) {
+                console.error('Failed to load preferences:', error);
+            }
+        }
+
+        function connectToGlobalStream() {
+            if (globalEventSource) {
+                globalEventSource.close();
+            }
+
+            globalEventSource = new EventSource('/api/stream');
+            
+            globalEventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'message') {
+                    // Add messages from any agent to the global chat
+                    addMessage(data.content, 'assistant', data.color, data.agent);
+                }
+            };
+
+            globalEventSource.onerror = function(error) {
+                console.error('Global stream error:', error);
+                // Attempt to reconnect after a delay
+                setTimeout(() => {
+                    connectToGlobalStream();
+                }, 5000);
+            };
+        }
+
+        function renderAgents() {
+            const list = document.getElementById('agentsList');
+            list.innerHTML = agents.map(agent => `
+                <div class="agent ${currentAgent?.name === agent.name ? 'active' : ''}" 
+                     onclick="selectAgent('${agent.name}')" style="border-left: 3px solid ${agent.color}">
+                    <div>
+                        <div class="agent-name">${agent.name}</div>
+                        <div class="agent-id">${agent.sessionId}</div>
+                    </div>
+                    <div class="agent-actions">
+                        <input type="color" value="${agent.color}" class="color-picker" 
+                               onchange="event.stopPropagation(); changeAgentColor('${agent.name}', this.value)" 
+                               title="Change color" />
+                        <div class="agent-delete" onclick="event.stopPropagation(); deleteAgent('${agent.name}')">×</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function createAgent() {
+            const name = document.getElementById('agentName').value.trim();
+            const role = document.getElementById('agentRole').value.trim();
+            
+            if (!name || !role) {
+                showStatus('Please enter both name and role', 'error');
+                return;
+            }
+
+            showStatus('Creating agent...', 'success');
+
+            try {
+                // Create the agent
+                const response = await fetch('/api/agents', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, role })
+                });
+
+                if (response.ok) {
+                    const newAgent = await response.json();
+                    agents.push(newAgent);
+                    renderAgents();
+                    
+                    // Select the new agent
+                    selectAgent(name);
+                    
+                    document.getElementById('agentName').value = '';
+                    document.getElementById('agentRole').value = '';
+                    showStatus(`Agent "${name}" created`, 'success');
+                } else {
+                    const error = await response.json();
+                    showStatus(error.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Failed to create agent', 'error');
+            }
+        }
+
+        async function changeAgentColor(agentName, newColor) {
+            try {
+                const response = await fetch(`/api/agents/${agentName}/color`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ color: newColor })
+                });
+
+                if (response.ok) {
+                    // Update local agent color
+                    const agent = agents.find(a => a.name === agentName);
+                    if (agent) {
+                        agent.color = newColor;
+                        renderAgents();
+                        
+                        // Update existing messages with new color
+                        updateMessageColors(agentName, newColor);
+                    }
+                    showStatus(`Updated ${agentName}'s color`, 'success');
+                } else {
+                    showStatus('Failed to update color', 'error');
+                }
+            } catch (error) {
+                showStatus('Failed to update color', 'error');
+            }
+        }
+
+        function updateMessageColors(agentName, newColor) {
+            // Update all existing messages from this agent with the new color
+            const messages = document.querySelectorAll('.message.assistant');
+            messages.forEach(messageDiv => {
+                const header = messageDiv.querySelector('.message-header');
+                if (header && header.textContent.includes(agentName)) {
+                    const rgb = hexToRgb(newColor);
+                    messageDiv.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
+                    messageDiv.style.borderLeft = `3px solid ${newColor}`;
+                    header.style.color = newColor;
+                }
+            });
+        }
+
+        function deleteAgent(name) {
+            const agent = agents.find(a => a.name === name);
+            if (!agent) return;
+            
+            pendingDeleteAgent = agent;
+            showDeleteModal(agent);
+        }
+
+        function showDeleteModal(agent) {
+            const modal = document.getElementById('deleteModal');
+            const agentCard = document.getElementById('agentInfoCard');
+            
+            // Set agent color for the info card
+            agentCard.style.setProperty('--agent-color', agent.color);
+            
+            // Populate agent info
+            agentCard.querySelector('.agent-name').textContent = agent.name;
+            agentCard.querySelector('.agent-details').textContent = `Session: ${agent.sessionId} • Color: ${agent.color}`;
+            
+            // Show modal
+            modal.style.display = 'flex';
+            
+            // Focus the cancel button by default
+            setTimeout(() => {
+                modal.querySelector('.modal-button.cancel').focus();
+            }, 100);
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            pendingDeleteAgent = null;
+        }
+
+        async function confirmDelete() {
+            if (!pendingDeleteAgent) return;
+            
+            const name = pendingDeleteAgent.name;
+            closeDeleteModal();
+
+            try {
+                const response = await fetch(`/api/agents/${name}`, { method: 'DELETE' });
+                if (response.ok) {
+                    agents = agents.filter(a => a.name !== name);
+                    
+                    // If this was the current agent, select another or none
+                    if (currentAgent?.name === name) {
+                        if (agents.length > 0) {
+                            selectAgent(agents[0].name);
+                        } else {
+                            currentAgent = null;
+                            document.getElementById('chatHeader').textContent = 'Select an agent';
+                            document.getElementById('messageInput').disabled = true;
+                            document.getElementById('sendButton').disabled = true;
+                        }
+                    }
+                    
+                    renderAgents();
+                    showStatus(`Agent "${name}" deleted`, 'success');
+                } else {
+                    showStatus('Failed to delete agent', 'error');
+                }
+            } catch (error) {
+                showStatus('Failed to delete agent', 'error');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+
+        // Handle escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('deleteModal').style.display === 'flex') {
+                closeDeleteModal();
+            }
+        });
+
+        function selectAgent(name) {
+            const agent = agents.find(a => a.name === name);
+            if (!agent) return;
+
+            currentAgent = agent;
+            document.getElementById('chatHeader').textContent = `💬 ${agent.name}`;
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendButton').disabled = false;
+            renderAgents();
+
+            showStatus(`Now talking to ${name}`, 'success');
+        }
+
+        function addMessage(content, type, color = '#10B981', agentName = null, shouldScroll = true) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            // Set the agent's color as background for assistant messages
+            if (type === 'assistant' && color) {
+                // Create a semi-transparent version of the agent's color for background
+                const rgb = hexToRgb(color);
+                messageDiv.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
+                messageDiv.style.borderLeft = `3px solid ${color}`;
+            }
+            
+            const timestamp = new Date().toLocaleTimeString();
+            let displayName, icon, headerColor;
+            
+            if (type === 'system') {
+                displayName = 'System';
+                icon = '⚡';
+                headerColor = '#6366f1';
+            } else if (type === 'user') {
+                displayName = 'You';
+                icon = '👤';
+                headerColor = '#3B82F6';
+            } else {
+                displayName = agentName || currentAgent?.name || 'Assistant';
+                icon = '🤖';
+                headerColor = color;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-header" style="color: ${headerColor}">
+                    ${icon} ${displayName} • ${timestamp}
+                </div>
+                <div>${content.replace(/\n/g, '<br>')}</div>
+            `;
+            
+            chatArea.appendChild(messageDiv);
+            if (shouldScroll) {
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+        }
+
+        // Helper function to convert hex to RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 42, g: 74, b: 42 }; // fallback to default green
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Handle slash commands
+            if (message.startsWith('/')) {
+                input.value = '';
+                await handleSlashCommand(message);
+                return;
+            }
+
+            if (!currentAgent) {
+                showStatus('Please select an agent first', 'error');
+                return;
+            }
+
+            // Show user message immediately
+            addMessage(message, 'user');
+            
+            input.value = '';
+            input.disabled = true;
+            document.getElementById('sendButton').disabled = true;
+
+            try {
+                const response = await fetch(`/api/message/${currentAgent.name}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    showStatus(error.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Failed to send message', 'error');
+            } finally {
+                input.disabled = false;
+                document.getElementById('sendButton').disabled = false;
+                input.focus();
+            }
+        }
+
+        async function handleSlashCommand(command) {
+            const parts = command.split(' ');
+            const cmd = parts[0].toLowerCase();
+
+            switch (cmd) {
+                case '/help':
+                    showHelpMessage();
+                    break;
+                    
+                case '/clear':
+                    clearChat();
+                    break;
+                    
+                case '/switch':
+                    handleSwitchCommand(parts.slice(1));
+                    break;
+                    
+                case '/create':
+                case '/new':
+                    await handleCreateCommand(command);
+                    break;
+                    
+                default:
+                    showStatus(`Unknown command: ${cmd}. Type /help for available commands.`, 'error');
+            }
+        }
+
+        function showHelpMessage() {
+            const helpContent = `
+<strong>Available Commands:</strong><br><br>
+<strong>/help</strong> - Show this help message<br>
+<strong>/clear</strong> - Clear all chat messages<br>
+<strong>/switch &lt;agent&gt;</strong> - Switch to a specific agent<br>
+<strong>/create "name" role</strong> - Create a new agent<br>
+<strong>/new "name" role</strong> - Alias for /create<br><br>
+<strong>Examples:</strong><br>
+• /create "Code Assistant" You are a helpful coding assistant<br>
+• /new "Writer" You are a creative writing assistant<br>
+• /switch "Mr. Black"<br>
+• /clear<br>
+            `;
+            
+            addMessage(helpContent, 'system');
+            showStatus('Help displayed', 'success');
+        }
+
+        async function clearChat() {
+            try {
+                // Clear server-side chat history
+                const response = await fetch('/api/chat-history', { method: 'DELETE' });
+                if (response.ok) {
+                    // Reload chat history from server (will be empty)
+                    await loadChatHistory();
+                    
+                    // Reconnect global stream fresh
+                    connectToGlobalStream();
+                    
+                    showStatus('Chat history cleared', 'success');
+                } else {
+                    showStatus('Failed to clear chat history', 'error');
+                }
+            } catch (error) {
+                console.error('Error clearing chat:', error);
+                showStatus('Failed to clear chat history', 'error');
+            }
+        }
+
+        function handleSwitchCommand(args) {
+            if (args.length === 0) {
+                if (agents.length === 0) {
+                    showStatus('No agents available to switch to', 'error');
+                    return;
+                }
+                
+                // Show available agents
+                const agentList = agents.map(a => a.name).join(', ');
+                addMessage(`Available agents: ${agentList}`, 'system');
+                showStatus('Available agents listed', 'success');
+                return;
+            }
+
+            let targetAgent = args.join(' ');
+            
+            // Handle quoted agent names
+            if (targetAgent.startsWith('"') && targetAgent.endsWith('"')) {
+                targetAgent = targetAgent.slice(1, -1);
+            }
+
+            const agent = agents.find(a => a.name.toLowerCase() === targetAgent.toLowerCase());
+            if (!agent) {
+                showStatus(`Agent "${targetAgent}" not found`, 'error');
+                return;
+            }
+
+            selectAgent(agent.name);
+            addMessage(`Switched to ${agent.name}`, 'system');
+        }
+
+        async function handleCreateCommand(command) {
+            const parts = command.split(' ').slice(1); // Remove '/create'
+            let name, role;
+
+            // Handle quoted names
+            const fullArgs = parts.join(' ');
+            if (fullArgs.startsWith('"')) {
+                const endQuoteIndex = fullArgs.indexOf('"', 1);
+                if (endQuoteIndex === -1) {
+                    showStatus('Invalid /create command: missing closing quote', 'error');
+                    return;
+                }
+                name = fullArgs.substring(1, endQuoteIndex);
+                role = fullArgs.substring(endQuoteIndex + 1).trim();
+            } else {
+                name = parts[0];
+                role = parts.slice(1).join(' ');
+            }
+
+            if (!name || !role) {
+                showStatus('Usage: /create "agent name" role description', 'error');
+                return;
+            }
+
+            // Use the existing createAgent function
+            document.getElementById('agentName').value = name;
+            document.getElementById('agentRole').value = role;
+            await createAgent();
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function showStatus(message, type = 'success') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            setTimeout(() => {
+                status.textContent = 'Ready';
+                status.className = 'status';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
