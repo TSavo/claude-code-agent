@@ -516,6 +516,11 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                         }
                         // Emit tool use event
                         if (eventHandler) {
+                          // Debug logging to see what the item structure looks like
+                          const fs = require('fs');
+                          const debugMsg = `[${new Date().toISOString()}] TOOL_USE_ITEM: ${JSON.stringify(item, null, 2)}\n`;
+                          fs.appendFileSync('/tmp/tool-use-debug.log', debugMsg);
+                          
                           const event = {
                             type: 'tool_use',
                             agentName: agentName || 'Claude',
@@ -527,6 +532,10 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                               tool_use_id: (item as any).id
                             }
                           };
+                          
+                          const eventMsg = `[${new Date().toISOString()}] EMITTING tool_use: ${JSON.stringify(event, null, 2)}\n`;
+                          fs.appendFileSync('/tmp/tool-use-debug.log', eventMsg);
+                          
                           eventHandler(event);
                         }
                       }

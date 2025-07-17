@@ -381,6 +381,7 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                     addMessage(data.content, 'assistant', data.color, data.agent);
                 } else if (data.type === 'tool_use') {
                     console.log('DEBUG: Received tool_use event:', data);
+                    console.log('DEBUG: tool_use_id value:', data.tool_use_id);
                     addToolUseMessage(data.tool_name, data.description, data.input, data.tool_use_id, data.color, data.agent);
                 } else if (data.type === 'user_message') {
                     addMessage(data.content, 'user', data.color, data.agent);
@@ -622,6 +623,7 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
         }
 
         function addToolUseMessage(toolName, description, input, toolUseId, color, agentName) {
+            console.log('DEBUG: Adding tool use message with ID:', toolUseId);
             const chatArea = document.getElementById('chatArea');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message tool-use';
@@ -661,15 +663,20 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             
             // Track this message for later updates
             toolMessages.set(toolUseId, messageDiv);
+            console.log('DEBUG: Stored tool message in Map with ID:', toolUseId, 'Map size:', toolMessages.size);
             
             chatArea.appendChild(messageDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
         function updateToolMessageWithResult(toolUseId, content, color, agentName) {
+            console.log('DEBUG: Looking for tool message with ID:', toolUseId);
+            console.log('DEBUG: Available IDs in Map:', Array.from(toolMessages.keys()));
             const messageDiv = toolMessages.get(toolUseId);
+            console.log('DEBUG: Found message div:', messageDiv ? 'YES' : 'NO');
             if (!messageDiv) {
                 // If we don't have the original tool use message, create a standalone result
+                console.log('DEBUG: Creating standalone tool result');
                 addStandaloneToolResult(content, color, agentName);
                 return;
             }
