@@ -21,11 +21,13 @@ const AGENTS_FILE = '.web-agents.json';
 const CHAT_HISTORY_FILE = '.web-chat-history.json';
 const PREFERENCES_FILE = '.web-preferences.json';
 
-// In-memory store for web sessions
+// In-memory store for web sessions  
 const sessionManager = new ClaudeSessionManager({
   sessionsFile: '.web-claude-sessions.json',
   suppressConsoleOutput: true
 });
+
+console.log('Session manager created with sessions file: .web-claude-sessions.json');
 
 let agents = new Map(); // agentName -> { session, color, lastActivity }
 let chatHistory = []; // Array of all messages
@@ -43,12 +45,13 @@ function loadPersistedData() {
       const agentsData = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8'));
       console.log('Loading persisted agents:', agentsData.length);
       
-      // Restore agents without sessions (will be recreated)
+      // Restore agents with their session IDs and roles
       agentsData.forEach(agentData => {
         agents.set(agentData.name, {
           color: agentData.color,
           lastActivity: new Date(agentData.lastActivity),
-          streams: new Set(),
+          sessionId: agentData.sessionId,
+          role: agentData.role,
           session: null // Will be restored when needed
         });
       });
@@ -84,7 +87,9 @@ function saveAgents() {
   const agentsData = Array.from(agents.entries()).map(([name, data]) => ({
     name,
     color: data.color,
-    lastActivity: data.lastActivity
+    lastActivity: data.lastActivity,
+    sessionId: data.sessionId || (data.session ? data.session.sessionId : null),
+    role: data.role || null
   }));
   
   fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsData, null, 2));
@@ -120,10 +125,27 @@ async function ensureAgentSession(agentName) {
   }
   
   if (!agent.session) {
-    console.log('Restoring session for agent:', agentName);
-    // We'll need to recreate with a generic role since we don't persist roles
-    // In a production system, you'd want to persist the role too
-    agent.session = await sessionManager.designateAgent(agentName, 'Assistant', null);
+    if (agent.sessionId) {
+      // Agent has a saved session ID, create a session object that will use -r
+      console.log('Restoring session for:', agentName, 'sessionId:', agent.sessionId.substring(0, 8));
+      agent.session = {
+        agentName: agentName,
+        sessionId: agent.sessionId,
+        lastPrompt: '',
+        lastResponse: '',
+        createdAt: new Date(),
+        lastUsedAt: new Date(),
+        totalCost: 0,
+        totalTurns: 0,
+        context: []
+      };
+    } else {
+      // No session ID saved, create new session (will not use -r flag)
+      console.log('Creating new session for agent:', agentName);
+      agent.session = await sessionManager.designateAgent(agentName, agent.role || 'Assistant', null);
+      agent.sessionId = agent.session.sessionId;
+      saveAgents(); // Save the new sessionId
+    }
   }
   
   return agent.session;
@@ -133,13 +155,16 @@ async function ensureAgentSession(agentName) {
 sessionManager.initialize();
 loadPersistedData();
 
+// Session manager initialized
+console.log('Session manager initialized.');
+
 // API Routes
 app.get('/api/agents', (req, res) => {
   const agentList = Array.from(agents.entries()).map(([name, data]) => ({
     name,
     color: data.color,
     lastActivity: data.lastActivity,
-    sessionId: data.session ? data.session.sessionId.substring(0, 8) : 'restored'
+    sessionId: data.sessionId ? data.sessionId.substring(0, 8) : (data.session ? data.session.sessionId.substring(0, 8) : 'new')
   }));
   res.json(agentList);
 });
@@ -159,13 +184,13 @@ app.post('/api/agents', async (req, res) => {
     // Create agent data
     const agentData = {
       color,
-      lastActivity: new Date()
+      lastActivity: new Date(),
+      role: role
     };
     agents.set(name, agentData);
     
     // Event handler to capture all streaming events
     const eventHandler = (event) => {
-      console.log('Agent event:', JSON.stringify(event, null, 2));
       
       if (event.type === 'process_output' && event.data && event.data.content) {
         const response = event.data.content
@@ -205,6 +230,7 @@ app.post('/api/agents', async (req, res) => {
     
     const session = await sessionManager.designateAgent(name, role, eventHandler);
     agentData.session = session;
+    agentData.sessionId = session.sessionId;
     
     // Save agents to disk
     saveAgents();
@@ -325,7 +351,6 @@ app.post('/api/message/:agentName', async (req, res) => {
     
     // Event handler for streaming events during conversation
     const eventHandler = (event) => {
-      console.log('Message event:', JSON.stringify(event, null, 2));
       
       if (event.type === 'process_output' && event.data && event.data.content) {
         const response = event.data.content

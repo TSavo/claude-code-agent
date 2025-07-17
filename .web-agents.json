@@ -2,6 +2,22 @@
   {
     "name": "Mr. Black",
     "color": "#000000",
-    "lastActivity": "2025-07-17T02:16:29.009Z"
+    "lastActivity": "2025-07-17T02:42:00.048Z",
+    "sessionId": "044b46cc-9a1a-4750-9d1a-4a441921e875",
+    "role": null
+  },
+  {
+    "name": "Mr. Bblue",
+    "color": "#8B5CF6",
+    "lastActivity": "2025-07-17T02:42:22.149Z",
+    "sessionId": "fefd0a62-49b5-478b-a88d-20edbe872390",
+    "role": "Test"
+  },
+  {
+    "name": "Mr. Brown",
+    "color": "#EC4899",
+    "lastActivity": "2025-07-17T02:46:18.907Z",
+    "sessionId": "07574935-1331-4428-86e8-ea3383bebf94",
+    "role": "Your name is Mr. Brown."
   }
 ]

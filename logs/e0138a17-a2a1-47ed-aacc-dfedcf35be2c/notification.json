@@ -1,0 +1,9 @@
+[
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Bash"
+  }
+]

@@ -325,6 +325,13 @@ For this conversation, you will roleplay as this character. When I ask "What is 
   }
 
   /**
+   * Get existing session for an agent
+   */
+  getAgentSession(agentName: string): AgentSession | undefined {
+    return this.sessions.get(agentName);
+  }
+
+  /**
    * Resume session with an agent by name
    */
   async resumeAgent(agentName: string, prompt: string, eventHandler?: (event: any) => void): Promise<ClaudeResponse> {
