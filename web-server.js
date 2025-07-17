@@ -24,7 +24,7 @@ const PREFERENCES_FILE = '.web-preferences.json';
 // In-memory store for web sessions  
 const sessionManager = new ClaudeSessionManager({
   sessionsFile: '.web-claude-sessions.json',
-  suppressConsoleOutput: true
+  suppressConsoleOutput: false
 });
 
 console.log('Session manager created with sessions file: .web-claude-sessions.json');

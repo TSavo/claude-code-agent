@@ -18,15 +18,14 @@ sys.path.append(str(Path(__file__).parent))
 async def store_conversation_data(claude_session_id: str, message_type: str, content: str):
     """Store conversation data in Memory Bank"""
     try:
-        # Same imports and setup as our working hooks
+        # Updated imports for new Memory Bank API
         import vertexai
         from google.cloud import aiplatform_v1beta1
         
         project = os.getenv('GOOGLE_CLOUD_PROJECT', 'gen-lang-client-0220754900')
         location = os.getenv('GOOGLE_CLOUD_LOCATION', 'us-central1')
         
-        # Initialize Vertex AI
-        vertexai.init(project=project, location=location)
+        # Initialize Vertex AI Client (new API)
         client = vertexai.Client(project=project, location=location)
         
         # Get agent engine
