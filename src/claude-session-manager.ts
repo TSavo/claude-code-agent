@@ -211,6 +211,10 @@ export class ClaudeSessionManager {
       this.logDebug(`Storage result: ${result.stdout}`);
       if (result.stderr) {
         this.logDebug(`Storage stderr: ${result.stderr}`);
+        // Also log Memory Bank debug output to console
+        if (!this.config.suppressConsoleOutput && result.stderr.includes('🧠')) {
+          console.log(result.stderr);
+        }
       }
       
       // Periodically generate memories
@@ -244,6 +248,10 @@ export class ClaudeSessionManager {
       this.logDebug(`Memory generation result: ${result.stdout}`);
       if (result.stderr) {
         this.logDebug(`Memory generation stderr: ${result.stderr}`);
+        // Also log Memory Bank debug output to console
+        if (!this.config.suppressConsoleOutput && result.stderr.includes('🧠')) {
+          console.log(result.stderr);
+        }
       }
     } catch (error) {
       this.logDebug(`Memory generation failed: ${error instanceof Error ? error.message : error}`);
