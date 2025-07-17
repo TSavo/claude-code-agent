@@ -226,6 +226,7 @@ app.post('/api/agents', async (req, res) => {
           color: agentData.color
         });
       } else if (event.type === 'tool_result') {
+        console.log('DEBUG: Received tool_result event (agent creation):', JSON.stringify(event, null, 2));
         // Broadcast tool result events
         broadcastToAllClients({
           type: 'tool_result',
@@ -394,6 +395,7 @@ app.post('/api/message/:agentName', async (req, res) => {
           color: agent.color
         });
       } else if (event.type === 'tool_result') {
+        console.log('DEBUG: Received tool_result event:', JSON.stringify(event, null, 2));
         // Broadcast tool result events
         broadcastToAllClients({
           type: 'tool_result',

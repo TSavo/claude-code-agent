@@ -561,6 +561,7 @@ For this conversation, you will roleplay as this character. When I ask "What is 
               case 'user':
                 if (!this.config.suppressConsoleOutput) {
                   console.log(chalk.cyan(`📋 ${agentName || 'Claude'} tool results received`));
+                  console.log('DEBUG jsonData:', JSON.stringify(jsonData, null, 2));
                 }
                 // Emit tool result event
                 if (eventHandler && jsonData.content) {
@@ -569,6 +570,7 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                     agentName: agentName || 'Claude',
                     data: jsonData
                   };
+                  console.log('DEBUG emitting tool_result event:', JSON.stringify(event, null, 2));
                   eventHandler(event);
                 }
                 // Store user message/tool results
