@@ -3,6 +3,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 const { ClaudeSessionManager } = require('./dist/claude-session-manager');
 
 const app = express();
@@ -45,16 +46,33 @@ function loadPersistedData() {
       const agentsData = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8'));
       console.log('Loading persisted agents:', agentsData.length);
       
+      let needsSaving = false;
+      
       // Restore agents with their session IDs and roles
       agentsData.forEach(agentData => {
+        let uuid = agentData.uuid;
+        if (!uuid) {
+          // Generate UUID if missing (for existing agents)
+          uuid = uuidv4();
+          needsSaving = true;
+          console.log(`Generated UUID for legacy agent ${agentData.name}: ${uuid.substring(0, 8)}`);
+        }
+        
         agents.set(agentData.name, {
           color: agentData.color,
           lastActivity: new Date(agentData.lastActivity),
           sessionId: agentData.sessionId,
           role: agentData.role,
+          uuid: uuid,
           session: null // Will be restored when needed
         });
       });
+      
+      // Save if we generated any new UUIDs
+      if (needsSaving) {
+        console.log('Persisting newly generated UUIDs...');
+        saveAgents();
+      }
     } catch (error) {
       console.error('Error loading agents:', error);
     }
@@ -89,7 +107,8 @@ function saveAgents() {
     color: data.color,
     lastActivity: data.lastActivity,
     sessionId: data.sessionId || (data.session ? data.session.sessionId : null),
-    role: data.role || null
+    role: data.role || null,
+    uuid: data.uuid // Persist the stable UUID
   }));
   
   fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsData, null, 2));
@@ -185,7 +204,8 @@ app.post('/api/agents', async (req, res) => {
     const agentData = {
       color,
       lastActivity: new Date(),
-      role: role
+      role: role,
+      uuid: uuidv4() // Generate stable UUID for Memory Bank
     };
     agents.set(name, agentData);
     
@@ -272,9 +292,16 @@ app.post('/api/agents', async (req, res) => {
       }
     };
     
-    const session = await sessionManager.designateAgent(name, role, eventHandler);
+    const session = await sessionManager.designateAgent(name, role, eventHandler, agentData.uuid);
     agentData.session = session;
     agentData.sessionId = session.sessionId;
+    
+    console.log('Agent created with session ID:', session.sessionId);
+    
+    // CRITICAL: Always store the session ID that Claude Code actually provided
+    if (session.sessionId) {
+      agentData.sessionId = session.sessionId;
+    }
     
     // Save agents to disk
     saveAgents();
@@ -477,7 +504,14 @@ app.post('/api/message/:agentName', async (req, res) => {
     };
     
     // Send the message and get response with streaming
-    const response = await sessionManager.resumeAgent(agentName, message, eventHandler);
+    const response = await sessionManager.resumeAgentWithSessionId(agent.sessionId, message, eventHandler, agent.uuid);
+    
+    // CRITICAL: Update session ID if Claude Code returned a different one
+    if (response.session_id && response.session_id !== agent.sessionId) {
+      console.log(`Agent ${agentName} session ID updated from ${agent.sessionId.substring(0, 8)} to ${response.session_id.substring(0, 8)}`);
+      agent.sessionId = response.session_id;
+      saveAgents(); // Persist the updated session ID
+    }
     
     // Add assistant response to chat history (if not already added by streaming)
     if (response.result && response.result.trim()) {

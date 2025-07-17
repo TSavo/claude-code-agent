@@ -160,6 +160,251 @@
             padding: 0.5rem;
             border-radius: 4px;
         }
+
+        /* Enhanced Tool Display Styles */
+        .bash-command {
+            margin: 0.5rem 0;
+        }
+        
+        .command-line {
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            border-left: 3px solid #10b981;
+        }
+        
+        .prompt {
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .command-desc {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        
+        .edit-operation, .write-operation, .read-operation {
+            margin: 0.5rem 0;
+        }
+        
+        .file-path {
+            color: #60a5fa;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .edit-change {
+            margin-top: 0.5rem;
+        }
+        
+        .change-from, .change-to {
+            margin: 0.5rem 0;
+        }
+        
+        .change-label {
+            color: #888;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .code-block {
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 0;
+            border-left: 3px solid #444;
+        }
+        
+        .change-from .code-block {
+            border-left-color: #ef4444;
+        }
+        
+        .change-to .code-block {
+            border-left-color: #10b981;
+        }
+        
+        .grep-operation, .glob-operation {
+            margin: 0.5rem 0;
+        }
+        
+        .search-pattern, .glob-pattern {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        
+        .search-path, .glob-path, .search-glob {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        
+        .todo-operation {
+            margin: 0.5rem 0;
+        }
+        
+        .todo-summary {
+            color: #60a5fa;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .todo-list {
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border-left: 3px solid #60a5fa;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 0.25rem 0;
+            gap: 0.5rem;
+        }
+        
+        .todo-item.completed {
+            opacity: 0.7;
+        }
+        
+        .todo-item.in_progress {
+            background: rgba(251, 191, 36, 0.1);
+        }
+        
+        .todo-status {
+            min-width: 20px;
+        }
+        
+        .todo-content {
+            flex: 1;
+        }
+        
+        .todo-priority {
+            font-size: 0.8rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .priority-high {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .priority-medium {
+            background: #fbbf24;
+            color: black;
+        }
+        
+        .priority-low {
+            background: #10b981;
+            color: white;
+        }
+        
+        .webfetch-operation, .websearch-operation {
+            margin: 0.5rem 0;
+        }
+        
+        .url {
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+        
+        .url a {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+        
+        .fetch-prompt, .search-query {
+            margin: 0.5rem 0;
+        }
+        
+        .prompt-text {
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border-left: 3px solid #60a5fa;
+            margin-top: 0.25rem;
+        }
+        
+        .search-domains {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        
+        .tool-params {
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border-left: 3px solid #888;
+        }
+        
+        .param-item {
+            display: flex;
+            margin: 0.25rem 0;
+            gap: 0.5rem;
+        }
+        
+        .param-key {
+            color: #fbbf24;
+            font-weight: bold;
+            min-width: 80px;
+        }
+        
+        .param-value {
+            color: #e5e5e5;
+            word-break: break-all;
+        }
+        
+        /* Tool Result Styles */
+        .bash-result, .edit-result, .read-result, .search-result, .tool-result {
+            margin: 0.5rem 0;
+        }
+        
+        .output-header, .content-header, .search-header, .result-header {
+            color: #10b981;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .terminal-output, .file-preview, .search-output, .result-output {
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 0;
+            border-left: 3px solid #10b981;
+            white-space: pre-wrap;
+        }
+        
+        .success-message {
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .edit-summary {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        
+        .tool-result.empty {
+            color: #10b981;
+            font-weight: bold;
+            padding: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 4px;
+            border-left: 3px solid #10b981;
+        }
         .message-header { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem; }
         
         /* Mobile Responsive Layout */
@@ -694,8 +939,8 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             if (input && Object.keys(input).length > 0) {
                 inputDisplay = `
                     <div class="tool-details">
-                        <strong>Tool Input:</strong>
-                        <div class="tool-input">${JSON.stringify(input, null, 2)}</div>
+                        <strong>Parameters:</strong>
+                        <div class="tool-input">${formatToolInput(toolName, input)}</div>
                     </div>
                 `;
             }
@@ -713,7 +958,10 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             `;
             
             // Track this message for later updates
-            toolMessages.set(toolUseId, messageDiv);
+            toolMessages.set(toolUseId, {
+                element: messageDiv,
+                toolName: toolName
+            });
             console.log('DEBUG: Stored tool message in Map with ID:', toolUseId, 'Map size:', toolMessages.size);
             
             chatArea.appendChild(messageDiv);
@@ -723,14 +971,17 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
         function updateToolMessageWithResult(toolUseId, content, color, agentName) {
             console.log('DEBUG: Looking for tool message with ID:', toolUseId);
             console.log('DEBUG: Available IDs in Map:', Array.from(toolMessages.keys()));
-            const messageDiv = toolMessages.get(toolUseId);
-            console.log('DEBUG: Found message div:', messageDiv ? 'YES' : 'NO');
-            if (!messageDiv) {
+            const toolData = toolMessages.get(toolUseId);
+            console.log('DEBUG: Found tool data:', toolData ? 'YES' : 'NO');
+            if (!toolData) {
                 // If we don't have the original tool use message, create a standalone result
                 console.log('DEBUG: Creating standalone tool result');
                 addStandaloneToolResult(content, color, agentName);
                 return;
             }
+            
+            const messageDiv = toolData.element;
+            const toolName = toolData.toolName;
             
             // Update the existing message with the result
             const toolContent = messageDiv.querySelector('.tool-content');
@@ -747,18 +998,11 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             }
             
             // Update the status with the result
-            if (resultDisplay.trim()) {
-                toolStatus.innerHTML = `
-                    <div class="tool-result-section">
-                        <strong>✅ Result:</strong>
-                        <div class="tool-details">
-                            <pre class="tool-output">${resultDisplay}</pre>
-                        </div>
-                    </div>
-                `;
-            } else {
-                toolStatus.innerHTML = '<div class="tool-result-section"><strong>✅ Completed</strong></div>';
-            }
+            toolStatus.innerHTML = `
+                <div class="tool-result-section">
+                    ${formatToolResult(toolName, resultDisplay)}
+                </div>
+            `;
             
             // Change the header icon to show completion
             const header = messageDiv.querySelector('.message-header');
@@ -818,6 +1062,152 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 42, g: 74, b: 42 };
         }
 
+        function formatToolInput(toolName, input) {
+            switch (toolName) {
+                case 'Bash':
+                    return `<div class="bash-command">
+                        <div class="command-line">
+                            <span class="prompt">$</span> <code>${input.command}</code>
+                        </div>
+                        ${input.description ? `<div class="command-desc">${input.description}</div>` : ''}
+                    </div>`;
+                
+                case 'Edit':
+                    return `<div class="edit-operation">
+                        <div class="file-path">📄 ${input.file_path}</div>
+                        <div class="edit-change">
+                            <div class="change-from">
+                                <span class="change-label">From:</span>
+                                <pre class="code-block">${input.old_string}</pre>
+                            </div>
+                            <div class="change-to">
+                                <span class="change-label">To:</span>
+                                <pre class="code-block">${input.new_string}</pre>
+                            </div>
+                        </div>
+                    </div>`;
+                
+                case 'Read':
+                    return `<div class="read-operation">
+                        <div class="file-path">📖 ${input.file_path}</div>
+                        ${input.offset ? `<div class="read-range">Lines ${input.offset} - ${input.offset + (input.limit || 50)}</div>` : ''}
+                    </div>`;
+                
+                case 'Write':
+                    return `<div class="write-operation">
+                        <div class="file-path">✍️ ${input.file_path}</div>
+                        <div class="content-preview">
+                            <span class="change-label">Content:</span>
+                            <pre class="code-block">${input.content.substring(0, 200)}${input.content.length > 200 ? '...' : ''}</pre>
+                        </div>
+                    </div>`;
+                
+                case 'Grep':
+                    return `<div class="grep-operation">
+                        <div class="search-pattern">🔍 <code>${input.pattern}</code></div>
+                        ${input.path ? `<div class="search-path">in: ${input.path}</div>` : ''}
+                        ${input.glob ? `<div class="search-glob">files: ${input.glob}</div>` : ''}
+                    </div>`;
+                
+                case 'Glob':
+                    return `<div class="glob-operation">
+                        <div class="glob-pattern">🗂️ <code>${input.pattern}</code></div>
+                        ${input.path ? `<div class="glob-path">in: ${input.path}</div>` : ''}
+                    </div>`;
+                
+                case 'TodoWrite':
+                    return `<div class="todo-operation">
+                        <div class="todo-summary">📝 Managing ${input.todos.length} todo items</div>
+                        <div class="todo-list">
+                            ${input.todos.map(todo => `
+                                <div class="todo-item ${todo.status}">
+                                    <span class="todo-status">${getStatusIcon(todo.status)}</span>
+                                    <span class="todo-content">${todo.content}</span>
+                                    <span class="todo-priority priority-${todo.priority}">${todo.priority}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>`;
+                
+                case 'WebFetch':
+                    return `<div class="webfetch-operation">
+                        <div class="url">🌐 <a href="${input.url}" target="_blank">${input.url}</a></div>
+                        <div class="fetch-prompt">
+                            <span class="change-label">Task:</span>
+                            <div class="prompt-text">${input.prompt}</div>
+                        </div>
+                    </div>`;
+                
+                case 'WebSearch':
+                    return `<div class="websearch-operation">
+                        <div class="search-query">🔍 <strong>${input.query}</strong></div>
+                        ${input.allowed_domains ? `<div class="search-domains">📍 ${input.allowed_domains.join(', ')}</div>` : ''}
+                    </div>`;
+                
+                default:
+                    // Fallback for unknown tools - still better than raw JSON
+                    return `<div class="tool-params">
+                        ${Object.entries(input).map(([key, value]) => `
+                            <div class="param-item">
+                                <span class="param-key">${key}:</span>
+                                <span class="param-value">${typeof value === 'string' ? value : JSON.stringify(value)}</span>
+                            </div>
+                        `).join('')}
+                    </div>`;
+            }
+        }
+
+        function getStatusIcon(status) {
+            switch (status) {
+                case 'completed': return '✅';
+                case 'in_progress': return '🔄';
+                case 'pending': return '⏳';
+                default: return '📝';
+            }
+        }
+
+        function formatToolResult(toolName, content) {
+            if (!content || content.trim() === '') {
+                return '<div class="tool-result empty">✅ Completed successfully</div>';
+            }
+
+            switch (toolName) {
+                case 'Bash':
+                    return `<div class="bash-result">
+                        <div class="output-header">Terminal Output:</div>
+                        <pre class="terminal-output">${content}</pre>
+                    </div>`;
+                
+                case 'Edit':
+                case 'Write':
+                    return `<div class="edit-result">
+                        <div class="success-message">✅ File updated successfully</div>
+                        ${content.includes('lines') ? `<div class="edit-summary">${content}</div>` : ''}
+                    </div>`;
+                
+                case 'Read':
+                    return `<div class="read-result">
+                        <div class="file-content">
+                            <div class="content-header">File Contents:</div>
+                            <pre class="file-preview">${content}</pre>
+                        </div>
+                    </div>`;
+                
+                case 'Grep':
+                case 'Glob':
+                    return `<div class="search-result">
+                        <div class="search-header">Search Results:</div>
+                        <pre class="search-output">${content}</pre>
+                    </div>`;
+                
+                default:
+                    return `<div class="tool-result">
+                        <div class="result-header">Result:</div>
+                        <pre class="result-output">${content}</pre>
+                    </div>`;
+            }
+        }
+
         async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
@@ -836,8 +1226,7 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
 
             // Don't add message locally - it will come back via broadcast
             input.value = '';
-            input.disabled = true;
-            document.getElementById('sendButton').disabled = true;
+            // Keep input and send button enabled for queue mode
 
             try {
                 const response = await fetch(`/api/message/${currentAgent.name}`, {
@@ -852,8 +1241,7 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             } catch (error) {
                 showStatus('Failed to send message', 'error');
             } finally {
-                input.disabled = false;
-                document.getElementById('sendButton').disabled = false;
+                // Keep input focused for queue mode
                 input.focus();
             }
         }

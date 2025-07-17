@@ -4,27 +4,31 @@
     "color": "#000000",
     "lastActivity": "2025-07-17T02:42:00.048Z",
     "sessionId": "044b46cc-9a1a-4750-9d1a-4a441921e875",
-    "role": null
+    "role": null,
+    "uuid": "64d1156d-2301-40b8-ad70-9c03b4a98048"
   },
   {
     "name": "Mr. Bblue",
     "color": "#8B5CF6",
     "lastActivity": "2025-07-17T02:42:22.149Z",
     "sessionId": "fefd0a62-49b5-478b-a88d-20edbe872390",
-    "role": "Test"
+    "role": "Test",
+    "uuid": "656579d5-940e-4b91-8178-ba634722b701"
   },
   {
     "name": "Mr. Brown",
     "color": "#612c00",
     "lastActivity": "2025-07-17T02:46:18.907Z",
     "sessionId": "07574935-1331-4428-86e8-ea3383bebf94",
-    "role": "Your name is Mr. Brown."
+    "role": "Your name is Mr. Brown.",
+    "uuid": "7b63c8c7-9b8c-4f70-b940-c412565e0e90"
   },
   {
-    "name": "Mr. Blonde",
-    "color": "#d2dd3c",
-    "lastActivity": "2025-07-17T04:34:38.057Z",
-    "sessionId": "97befa4d-e46f-4373-a0dc-b73373aa6a2a",
-    "role": "Your name is Mr. Blone, you are part of a crack team of software engineers."
+    "name": "Mr. Green",
+    "color": "#3B82F6",
+    "lastActivity": "2025-07-17T19:06:04.346Z",
+    "sessionId": "bd122b87-9f02-476d-97cc-cb0ab57b05cf",
+    "role": "You area software enginner",
+    "uuid": "beae41d9-b983-4c99-b0b5-3d24f45c4ed7"
   }
 ]

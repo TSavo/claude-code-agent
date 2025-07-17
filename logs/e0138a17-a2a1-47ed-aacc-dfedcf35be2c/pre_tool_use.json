@@ -752,5 +752,959 @@
         }
       ]
     }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "      let finalResponse: ClaudeResponse | null = null;\n\n      claudeProcess.stdout.on('data', (data) => {\n        const lines = data.toString().split('\\n').filter((line: string) => line.trim());\n        \n        lines.forEach((line: string) => {\n          try {\n            const jsonData = JSON.parse(line);\n            \n            switch (jsonData.type) {\n              case 'system':\n                if (!this.config.suppressConsoleOutput) {\n                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: Session ${jsonData.session_id?.substring(0, 8)}... initialized`));\n                }\n                // Store system initialization\n                if (sessionId) {\n                  this.storeConversationInMemoryBank(sessionId, 'system', { session_id: jsonData.session_id });\n                }\n                break;",
+      "new_string": "      let finalResponse: ClaudeResponse | null = null;\n      let capturedSessionId: string | null = null;\n\n      claudeProcess.stdout.on('data', (data) => {\n        const lines = data.toString().split('\\n').filter((line: string) => line.trim());\n        \n        lines.forEach((line: string) => {\n          try {\n            const jsonData = JSON.parse(line);\n            \n            switch (jsonData.type) {\n              case 'system':\n                // Capture session ID from first system message for new sessions\n                if (!sessionId && jsonData.session_id) {\n                  capturedSessionId = jsonData.session_id;\n                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: New session ${capturedSessionId.substring(0, 8)}... initialized`));\n                } else if (sessionId) {\n                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: Resuming session ${sessionId.substring(0, 8)}... initialized`));\n                }\n                \n                // Store system initialization\n                const currentSessionId = sessionId || capturedSessionId;\n                if (currentSessionId) {\n                  this.storeConversationInMemoryBank(currentSessionId, 'system', { session_id: jsonData.session_id });\n                }\n                break;"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+      "pattern": "Store assistant message in Memory Bank",
+      "path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "output_mode": "content",
+      "-B": 1,
+      "-A": 3
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                  // Store assistant message in Memory Bank\n                  if (sessionId) {\n                    this.storeConversationInMemoryBank(sessionId, 'assistant', message);\n                  }",
+      "new_string": "                  // Store assistant message in Memory Bank\n                  const currentSessionId = sessionId || capturedSessionId;\n                  if (currentSessionId) {\n                    this.storeConversationInMemoryBank(currentSessionId, 'assistant', message);\n                  }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store user message/tool results\n                if (sessionId) {\n                  this.storeConversationInMemoryBank(sessionId, 'user', jsonData);\n                }",
+      "new_string": "                // Store user message/tool results\n                const currentSessionId = sessionId || capturedSessionId;\n                if (currentSessionId) {\n                  this.storeConversationInMemoryBank(currentSessionId, 'user', jsonData);\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "              case 'result':\n                finalResponse = jsonData;\n                // Store final result and flush buffer\n                if (sessionId) {\n                  this.storeConversationInMemoryBank(sessionId, 'result', jsonData);\n                  this.flushConversationBuffer(); // Ensure all data is stored\n                }\n                break;",
+      "new_string": "              case 'result':\n                finalResponse = jsonData;\n                // Use captured session ID if this is a new session\n                if (!sessionId && capturedSessionId) {\n                  finalResponse.session_id = capturedSessionId;\n                }\n                // Store final result and flush buffer\n                const currentSessionId = sessionId || capturedSessionId;\n                if (currentSessionId) {\n                  this.storeConversationInMemoryBank(currentSessionId, 'result', jsonData);\n                  this.flushConversationBuffer(); // Ensure all data is stored\n                }\n                break;"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store other message types\n                if (sessionId) {\n                  this.storeConversationInMemoryBank(sessionId, jsonData.type, jsonData);\n                }",
+      "new_string": "                // Store other message types\n                const currentSessionId = sessionId || capturedSessionId;\n                if (currentSessionId) {\n                  this.storeConversationInMemoryBank(currentSessionId, jsonData.type, jsonData);\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "    const session = await sessionManager.designateAgent(name, role, eventHandler);\n    agentData.session = session;\n    agentData.sessionId = session.sessionId;",
+      "new_string": "    const session = await sessionManager.designateAgent(name, role, eventHandler);\n    agentData.session = session;\n    agentData.sessionId = session.sessionId;\n    \n    console.log('Agent created with session ID:', session.sessionId);"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "  /**\n   * Resume session with an agent by name\n   */\n  async resumeAgent(agentName: string, prompt: string, eventHandler?: (event: any) => void): Promise<ClaudeResponse> {\n    this.logDebug(`Resuming agent: ${agentName} with prompt: ${prompt.substring(0, 100)}...`);\n    const session = this.sessions.get(agentName);\n    if (!session) {\n      throw new Error(`No session found for agent: ${agentName}`);\n    }\n\n    const response = await this.executeClaudeCommandStreaming(prompt, session.sessionId, agentName, eventHandler);\n    \n    // Update session data\n    session.lastPrompt = prompt;\n    session.lastResponse = response.result;\n    session.lastUsedAt = new Date();\n    session.totalCost += response.total_cost_usd;\n    session.totalTurns += response.num_turns;\n    session.context.push(prompt, response.result);\n    \n    // Keep context manageable (last 20 interactions)\n    if (session.context.length > 40) {\n      session.context = session.context.slice(-40);\n    }\n\n    await this.saveSessions();\n    return response;\n  }",
+      "new_string": "  /**\n   * Resume session with an agent by name\n   */\n  async resumeAgent(agentName: string, prompt: string, eventHandler?: (event: any) => void): Promise<ClaudeResponse> {\n    this.logDebug(`Resuming agent: ${agentName} with prompt: ${prompt.substring(0, 100)}...`);\n    const session = this.sessions.get(agentName);\n    if (!session) {\n      throw new Error(`No session found for agent: ${agentName}`);\n    }\n\n    const response = await this.executeClaudeCommandStreaming(prompt, session.sessionId, agentName, eventHandler);\n    \n    // Update session data\n    session.lastPrompt = prompt;\n    session.lastResponse = response.result;\n    session.lastUsedAt = new Date();\n    session.totalCost += response.total_cost_usd;\n    session.totalTurns += response.num_turns;\n    session.context.push(prompt, response.result);\n    \n    // Keep context manageable (last 20 interactions)\n    if (session.context.length > 40) {\n      session.context = session.context.slice(-40);\n    }\n\n    await this.saveSessions();\n    return response;\n  }\n\n  /**\n   * Resume session with a specific session ID (for web server)\n   */\n  async resumeAgentWithSessionId(sessionId: string, prompt: string, eventHandler?: (event: any) => void): Promise<ClaudeResponse> {\n    this.logDebug(`Resuming session: ${sessionId.substring(0, 8)} with prompt: ${prompt.substring(0, 100)}...`);\n    return await this.executeClaudeCommandStreaming(prompt, sessionId, 'Agent', eventHandler);\n  }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "    // Send the message and get response with streaming\n    const response = await sessionManager.resumeAgent(agentName, message, eventHandler);",
+      "new_string": "    // Send the message and get response with streaming\n    const response = await sessionManager.resumeAgentWithSessionId(agent.sessionId, message, eventHandler);"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "npm run build",
+      "description": "Build TypeScript changes"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store system initialization\n                const currentSessionId = sessionId || capturedSessionId;\n                if (currentSessionId) {\n                  this.storeConversationInMemoryBank(currentSessionId, 'system', { session_id: jsonData.session_id });\n                }",
+      "new_string": "                // Store system initialization\n                const systemSessionId = sessionId || capturedSessionId;\n                if (systemSessionId) {\n                  this.storeConversationInMemoryBank(systemSessionId, 'system', { session_id: jsonData.session_id });\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                  // Store assistant message in Memory Bank\n                  const currentSessionId = sessionId || capturedSessionId;\n                  if (currentSessionId) {\n                    this.storeConversationInMemoryBank(currentSessionId, 'assistant', message);\n                  }",
+      "new_string": "                  // Store assistant message in Memory Bank\n                  const assistantSessionId = sessionId || capturedSessionId;\n                  if (assistantSessionId) {\n                    this.storeConversationInMemoryBank(assistantSessionId, 'assistant', message);\n                  }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Modify existing multi-agent system to add Memory Bank integration",
+          "status": "completed",
+          "priority": "high",
+          "id": "3"
+        },
+        {
+          "content": "Add memory retrieval and context injection file + PreToolUse hook",
+          "status": "completed",
+          "priority": "high",
+          "id": "4"
+        },
+        {
+          "content": "Fix web server agent creation to show initial response",
+          "status": "completed",
+          "priority": "high",
+          "id": "5"
+        },
+        {
+          "content": "Add persistence for agents, colors, and chat history",
+          "status": "completed",
+          "priority": "high",
+          "id": "6"
+        },
+        {
+          "content": "Add better modal dialogs for agent deletion",
+          "status": "completed",
+          "priority": "medium",
+          "id": "7"
+        },
+        {
+          "content": "Test session persistence fix to ensure agents maintain context across restarts",
+          "status": "completed",
+          "priority": "high",
+          "id": "8"
+        },
+        {
+          "content": "Add mobile-friendly responsive CSS to the web interface",
+          "status": "completed",
+          "priority": "medium",
+          "id": "9"
+        },
+        {
+          "content": "Fix session ID capture from Claude Code's streaming JSON response",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "10"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store user message/tool results\n                const currentSessionId = sessionId || capturedSessionId;\n                if (currentSessionId) {\n                  this.storeConversationInMemoryBank(currentSessionId, 'user', jsonData);\n                }",
+      "new_string": "                // Store user message/tool results\n                const userSessionId = sessionId || capturedSessionId;\n                if (userSessionId) {\n                  this.storeConversationInMemoryBank(userSessionId, 'user', jsonData);\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store final result and flush buffer\n                const currentSessionId = sessionId || capturedSessionId;\n                if (currentSessionId) {\n                  this.storeConversationInMemoryBank(currentSessionId, 'result', jsonData);\n                  this.flushConversationBuffer(); // Ensure all data is stored\n                }",
+      "new_string": "                // Store final result and flush buffer\n                const resultSessionId = sessionId || capturedSessionId;\n                if (resultSessionId) {\n                  this.storeConversationInMemoryBank(resultSessionId, 'result', jsonData);\n                  this.flushConversationBuffer(); // Ensure all data is stored\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store other message types\n                const currentSessionId = sessionId || capturedSessionId;\n                if (currentSessionId) {\n                  this.storeConversationInMemoryBank(currentSessionId, jsonData.type, jsonData);\n                }",
+      "new_string": "                // Store other message types\n                const otherSessionId = sessionId || capturedSessionId;\n                if (otherSessionId) {\n                  this.storeConversationInMemoryBank(otherSessionId, jsonData.type, jsonData);\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "offset": 665,
+      "limit": 5
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Use captured session ID if this is a new session\n                if (!sessionId && capturedSessionId) {\n                  finalResponse.session_id = capturedSessionId;\n                }",
+      "new_string": "                // Use captured session ID if this is a new session\n                if (!sessionId && capturedSessionId && finalResponse) {\n                  finalResponse.session_id = capturedSessionId;\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "npm run build",
+      "description": "Build TypeScript with fixes"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: New session ${capturedSessionId.substring(0, 8)}... initialized`));",
+      "new_string": "                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: New session ${capturedSessionId?.substring(0, 8)}... initialized`));"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "npm run build",
+      "description": "Build TypeScript after null check fix"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "pkill -f \"node.*web-server.js\" && node web-server.js",
+      "timeout": 15000,
+      "description": "Restart web server to test session ID fix"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "node web-server.js",
+      "timeout": 10000,
+      "description": "Start web server"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Modify existing multi-agent system to add Memory Bank integration",
+          "status": "completed",
+          "priority": "high",
+          "id": "3"
+        },
+        {
+          "content": "Add memory retrieval and context injection file + PreToolUse hook",
+          "status": "completed",
+          "priority": "high",
+          "id": "4"
+        },
+        {
+          "content": "Fix web server agent creation to show initial response",
+          "status": "completed",
+          "priority": "high",
+          "id": "5"
+        },
+        {
+          "content": "Add persistence for agents, colors, and chat history",
+          "status": "completed",
+          "priority": "high",
+          "id": "6"
+        },
+        {
+          "content": "Add better modal dialogs for agent deletion",
+          "status": "completed",
+          "priority": "medium",
+          "id": "7"
+        },
+        {
+          "content": "Test session persistence fix to ensure agents maintain context across restarts",
+          "status": "completed",
+          "priority": "high",
+          "id": "8"
+        },
+        {
+          "content": "Add mobile-friendly responsive CSS to the web interface",
+          "status": "completed",
+          "priority": "medium",
+          "id": "9"
+        },
+        {
+          "content": "Fix session ID capture from Claude Code's streaming JSON response",
+          "status": "completed",
+          "priority": "high",
+          "id": "10"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "      let finalResponse: ClaudeResponse | null = null;\n      let capturedSessionId: string | null = null;\n\n      claudeProcess.stdout.on('data', (data) => {\n        const lines = data.toString().split('\\n').filter((line: string) => line.trim());\n        \n        lines.forEach((line: string) => {\n          try {\n            const jsonData = JSON.parse(line);\n            \n            switch (jsonData.type) {\n              case 'system':\n                // Capture session ID from first system message for new sessions\n                if (!sessionId && jsonData.session_id) {\n                  capturedSessionId = jsonData.session_id;\n                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: New session ${capturedSessionId?.substring(0, 8)}... initialized`));\n                } else if (sessionId) {\n                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: Resuming session ${sessionId.substring(0, 8)}... initialized`));\n                }\n                \n                // Store system initialization\n                const systemSessionId = sessionId || capturedSessionId;\n                if (systemSessionId) {\n                  this.storeConversationInMemoryBank(systemSessionId, 'system', { session_id: jsonData.session_id });\n                }\n                break;",
+      "new_string": "      let finalResponse: ClaudeResponse | null = null;\n      let capturedSessionId: string | null = null;\n\n      claudeProcess.stdout.on('data', (data) => {\n        const lines = data.toString().split('\\n').filter((line: string) => line.trim());\n        \n        lines.forEach((line: string) => {\n          try {\n            const jsonData = JSON.parse(line);\n            \n            // CRITICAL: Always capture session ID from ANY JSON response that has it\n            if (jsonData.session_id) {\n              if (!capturedSessionId) {\n                capturedSessionId = jsonData.session_id;\n                if (!sessionId) {\n                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: New session ${capturedSessionId?.substring(0, 8)}... initialized`));\n                }\n              } else if (capturedSessionId !== jsonData.session_id) {\n                // Session ID changed - update our stored ID\n                console.log(chalk.yellow(`\ud83d\udd27 ${agentName || 'Claude'} session ID changed from ${capturedSessionId.substring(0, 8)} to ${jsonData.session_id.substring(0, 8)}`));\n                capturedSessionId = jsonData.session_id;\n              }\n            }\n            \n            switch (jsonData.type) {\n              case 'system':\n                if (sessionId) {\n                  console.log(chalk.blue(`\ud83d\udd27 ${agentName || 'Claude'} system: Resuming session ${sessionId.substring(0, 8)}... initialized`));\n                }\n                \n                // Store system initialization\n                const systemSessionId = sessionId || capturedSessionId;\n                if (systemSessionId) {\n                  this.storeConversationInMemoryBank(systemSessionId, 'system', { session_id: jsonData.session_id });\n                }\n                break;"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "    // Send the message and get response with streaming\n    const response = await sessionManager.resumeAgentWithSessionId(agent.sessionId, message, eventHandler);\n    \n    // Add assistant response to chat history (if not already added by streaming)\n    if (response.result && response.result.trim()) {\n      addToChatHistory({\n        type: 'assistant',\n        agent: agentName,\n        content: response.result,\n        color: agent.color\n      });\n    }\n    \n    agent.lastActivity = new Date();",
+      "new_string": "    // Send the message and get response with streaming\n    const response = await sessionManager.resumeAgentWithSessionId(agent.sessionId, message, eventHandler);\n    \n    // CRITICAL: Update session ID if Claude Code returned a different one\n    if (response.session_id && response.session_id !== agent.sessionId) {\n      console.log(`Agent ${agentName} session ID updated from ${agent.sessionId.substring(0, 8)} to ${response.session_id.substring(0, 8)}`);\n      agent.sessionId = response.session_id;\n      saveAgents(); // Persist the updated session ID\n    }\n    \n    // Add assistant response to chat history (if not already added by streaming)\n    if (response.result && response.result.trim()) {\n      addToChatHistory({\n        type: 'assistant',\n        agent: agentName,\n        content: response.result,\n        color: agent.color\n      });\n    }\n    \n    agent.lastActivity = new Date();"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "    const session = await sessionManager.designateAgent(name, role, eventHandler);\n    agentData.session = session;\n    agentData.sessionId = session.sessionId;\n    \n    console.log('Agent created with session ID:', session.sessionId);",
+      "new_string": "    const session = await sessionManager.designateAgent(name, role, eventHandler);\n    agentData.session = session;\n    agentData.sessionId = session.sessionId;\n    \n    console.log('Agent created with session ID:', session.sessionId);\n    \n    // CRITICAL: Always store the session ID that Claude Code actually provided\n    if (session.sessionId) {\n      agentData.sessionId = session.sessionId;\n    }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "    const session: AgentSession = {\n      agentName,\n      sessionId: response.session_id,\n      lastPrompt: initialPrompt,\n      lastResponse: response.result,\n      createdAt: new Date(),\n      lastUsedAt: new Date(),\n      totalCost: response.total_cost_usd,\n      totalTurns: response.num_turns,\n      context: [initialPrompt, response.result]\n    };",
+      "new_string": "    const session: AgentSession = {\n      agentName,\n      sessionId: response.session_id, // Always use the session ID that Claude Code returned\n      lastPrompt: initialPrompt,\n      lastResponse: response.result,\n      createdAt: new Date(),\n      lastUsedAt: new Date(),\n      totalCost: response.total_cost_usd,\n      totalTurns: response.num_turns,\n      context: [initialPrompt, response.result]\n    };"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "npm run build",
+      "description": "Build updated session ID handling"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "pkill -f \"node.*web-server.js\"",
+      "description": "Stop current web server"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "node web-server.js",
+      "timeout": 10000,
+      "description": "Start web server with enhanced session ID handling"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "offset": 1,
+      "limit": 10
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "const express = require('express');\nconst path = require('path');\nconst fs = require('fs');\nconst { ClaudeSessionManager } = require('./dist/claude-session-manager');",
+      "new_string": "const express = require('express');\nconst path = require('path');\nconst fs = require('fs');\nconst { v4: uuidv4 } = require('uuid');\nconst { ClaudeSessionManager } = require('./dist/claude-session-manager');"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Modify existing multi-agent system to add Memory Bank integration",
+          "status": "completed",
+          "priority": "high",
+          "id": "3"
+        },
+        {
+          "content": "Add memory retrieval and context injection file + PreToolUse hook",
+          "status": "completed",
+          "priority": "high",
+          "id": "4"
+        },
+        {
+          "content": "Fix web server agent creation to show initial response",
+          "status": "completed",
+          "priority": "high",
+          "id": "5"
+        },
+        {
+          "content": "Add persistence for agents, colors, and chat history",
+          "status": "completed",
+          "priority": "high",
+          "id": "6"
+        },
+        {
+          "content": "Add better modal dialogs for agent deletion",
+          "status": "completed",
+          "priority": "medium",
+          "id": "7"
+        },
+        {
+          "content": "Test session persistence fix to ensure agents maintain context across restarts",
+          "status": "completed",
+          "priority": "high",
+          "id": "8"
+        },
+        {
+          "content": "Add mobile-friendly responsive CSS to the web interface",
+          "status": "completed",
+          "priority": "medium",
+          "id": "9"
+        },
+        {
+          "content": "Fix session ID capture from Claude Code's streaming JSON response",
+          "status": "completed",
+          "priority": "high",
+          "id": "10"
+        },
+        {
+          "content": "Add stable UUID for Memory Bank to handle floating session IDs",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "11"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "      // Restore agents with their session IDs and roles\n      agentsData.forEach(agentData => {\n        agents.set(agentData.name, {\n          color: agentData.color,\n          lastActivity: new Date(agentData.lastActivity),\n          sessionId: agentData.sessionId,\n          role: agentData.role,\n          session: null // Will be restored when needed\n        });\n      });",
+      "new_string": "      // Restore agents with their session IDs and roles\n      agentsData.forEach(agentData => {\n        agents.set(agentData.name, {\n          color: agentData.color,\n          lastActivity: new Date(agentData.lastActivity),\n          sessionId: agentData.sessionId,\n          role: agentData.role,\n          uuid: agentData.uuid || uuidv4(), // Generate UUID if missing (for existing agents)\n          session: null // Will be restored when needed\n        });\n      });"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "function saveAgents() {\n  const agentsData = Array.from(agents.entries()).map(([name, data]) => ({\n    name,\n    color: data.color,\n    lastActivity: data.lastActivity,\n    sessionId: data.sessionId || (data.session ? data.session.sessionId : null),\n    role: data.role || null\n  }));\n  \n  fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsData, null, 2));\n}",
+      "new_string": "function saveAgents() {\n  const agentsData = Array.from(agents.entries()).map(([name, data]) => ({\n    name,\n    color: data.color,\n    lastActivity: data.lastActivity,\n    sessionId: data.sessionId || (data.session ? data.session.sessionId : null),\n    role: data.role || null,\n    uuid: data.uuid // Persist the stable UUID\n  }));\n  \n  fs.writeFileSync(AGENTS_FILE, JSON.stringify(agentsData, null, 2));\n}"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "    // Create agent data\n    const agentData = {\n      color,\n      lastActivity: new Date(),\n      role: role\n    };\n    agents.set(name, agentData);",
+      "new_string": "    // Create agent data\n    const agentData = {\n      color,\n      lastActivity: new Date(),\n      role: role,\n      uuid: uuidv4() // Generate stable UUID for Memory Bank\n    };\n    agents.set(name, agentData);"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "  /**\n   * Designate an agent with an initial prompt and create session\n   */\n  async designateAgent(agentName: string, initialPrompt: string, eventHandler?: (event: any) => void): Promise<AgentSession> {",
+      "new_string": "  /**\n   * Designate an agent with an initial prompt and create session\n   */\n  async designateAgent(agentName: string, initialPrompt: string, eventHandler?: (event: any) => void, memoryBankUuid?: string): Promise<AgentSession> {"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "    const response = await this.executeClaudeCommandStreaming(setupPrompt, undefined, agentName, eventHandler);",
+      "new_string": "    const response = await this.executeClaudeCommandStreaming(setupPrompt, undefined, agentName, eventHandler, memoryBankUuid);"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "  /**\n   * Resume session with a specific session ID (for web server)\n   */\n  async resumeAgentWithSessionId(sessionId: string, prompt: string, eventHandler?: (event: any) => void): Promise<ClaudeResponse> {\n    this.logDebug(`Resuming session: ${sessionId.substring(0, 8)} with prompt: ${prompt.substring(0, 100)}...`);\n    return await this.executeClaudeCommandStreaming(prompt, sessionId, 'Agent', eventHandler);\n  }",
+      "new_string": "  /**\n   * Resume session with a specific session ID (for web server)\n   */\n  async resumeAgentWithSessionId(sessionId: string, prompt: string, eventHandler?: (event: any) => void, memoryBankUuid?: string): Promise<ClaudeResponse> {\n    this.logDebug(`Resuming session: ${sessionId.substring(0, 8)} with prompt: ${prompt.substring(0, 100)}...`);\n    return await this.executeClaudeCommandStreaming(prompt, sessionId, 'Agent', eventHandler, memoryBankUuid);\n  }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "  /**\n   * Execute Claude command with streaming output for agent creation\n   */\n  private async executeClaudeCommandStreaming(prompt: string, sessionId?: string, agentName?: string, eventHandler?: (event: any) => void): Promise<ClaudeResponse> {",
+      "new_string": "  /**\n   * Execute Claude command with streaming output for agent creation\n   */\n  private async executeClaudeCommandStreaming(prompt: string, sessionId?: string, agentName?: string, eventHandler?: (event: any) => void, memoryBankUuid?: string): Promise<ClaudeResponse> {"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "      this.logDebug(`About to retrieve memories for streaming command, session: ${sessionId}, expanded hint: \"${contextHint.substring(0, 100)}...\"`);\n      await this.retrieveMemories(sessionId, contextHint);",
+      "new_string": "      this.logDebug(`About to retrieve memories for streaming command, session: ${sessionId}, expanded hint: \"${contextHint.substring(0, 100)}...\"`);\n      await this.retrieveMemories(memoryBankUuid || sessionId, contextHint);"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "      // Store the user's prompt in Memory Bank  \n      if (sessionId) {\n        this.storeConversationInMemoryBank(sessionId, 'user_prompt', { text: prompt });\n      }",
+      "new_string": "      // Store the user's prompt in Memory Bank  \n      if (sessionId) {\n        this.storeConversationInMemoryBank(memoryBankUuid || sessionId, 'user_prompt', { text: prompt });\n      }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store system initialization\n                const systemSessionId = sessionId || capturedSessionId;\n                if (systemSessionId) {\n                  this.storeConversationInMemoryBank(systemSessionId, 'system', { session_id: jsonData.session_id });\n                }",
+      "new_string": "                // Store system initialization\n                const systemSessionId = sessionId || capturedSessionId;\n                if (systemSessionId) {\n                  this.storeConversationInMemoryBank(memoryBankUuid || systemSessionId, 'system', { session_id: jsonData.session_id });\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                  // Store assistant message in Memory Bank\n                  const assistantSessionId = sessionId || capturedSessionId;\n                  if (assistantSessionId) {\n                    this.storeConversationInMemoryBank(assistantSessionId, 'assistant', message);\n                  }",
+      "new_string": "                  // Store assistant message in Memory Bank\n                  const assistantSessionId = sessionId || capturedSessionId;\n                  if (assistantSessionId) {\n                    this.storeConversationInMemoryBank(memoryBankUuid || assistantSessionId, 'assistant', message);\n                  }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store user message/tool results\n                const userSessionId = sessionId || capturedSessionId;\n                if (userSessionId) {\n                  this.storeConversationInMemoryBank(userSessionId, 'user', jsonData);\n                }",
+      "new_string": "                // Store user message/tool results\n                const userSessionId = sessionId || capturedSessionId;\n                if (userSessionId) {\n                  this.storeConversationInMemoryBank(memoryBankUuid || userSessionId, 'user', jsonData);\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store final result and flush buffer\n                const resultSessionId = sessionId || capturedSessionId;\n                if (resultSessionId) {\n                  this.storeConversationInMemoryBank(resultSessionId, 'result', jsonData);\n                  this.flushConversationBuffer(); // Ensure all data is stored\n                }",
+      "new_string": "                // Store final result and flush buffer\n                const resultSessionId = sessionId || capturedSessionId;\n                if (resultSessionId) {\n                  this.storeConversationInMemoryBank(memoryBankUuid || resultSessionId, 'result', jsonData);\n                  this.flushConversationBuffer(); // Ensure all data is stored\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/src/claude-session-manager.ts",
+      "old_string": "                // Store other message types\n                const otherSessionId = sessionId || capturedSessionId;\n                if (otherSessionId) {\n                  this.storeConversationInMemoryBank(otherSessionId, jsonData.type, jsonData);\n                }",
+      "new_string": "                // Store other message types\n                const otherSessionId = sessionId || capturedSessionId;\n                if (otherSessionId) {\n                  this.storeConversationInMemoryBank(memoryBankUuid || otherSessionId, jsonData.type, jsonData);\n                }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "    const session = await sessionManager.designateAgent(name, role, eventHandler);",
+      "new_string": "    const session = await sessionManager.designateAgent(name, role, eventHandler, agentData.uuid);"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "    // Send the message and get response with streaming\n    const response = await sessionManager.resumeAgentWithSessionId(agent.sessionId, message, eventHandler);",
+      "new_string": "    // Send the message and get response with streaming\n    const response = await sessionManager.resumeAgentWithSessionId(agent.sessionId, message, eventHandler, agent.uuid);"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "npm install uuid",
+      "description": "Install uuid package for stable agent UUIDs"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "npm run build",
+      "description": "Build TypeScript with UUID support"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "pkill -f \"node.*web-server.js\" && node web-server.js",
+      "timeout": 10000,
+      "description": "Restart web server with UUID support"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "node web-server.js",
+      "description": "Restart web server to test UUID persistence"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Modify existing multi-agent system to add Memory Bank integration",
+          "status": "completed",
+          "priority": "high",
+          "id": "3"
+        },
+        {
+          "content": "Add memory retrieval and context injection file + PreToolUse hook",
+          "status": "completed",
+          "priority": "high",
+          "id": "4"
+        },
+        {
+          "content": "Fix web server agent creation to show initial response",
+          "status": "completed",
+          "priority": "high",
+          "id": "5"
+        },
+        {
+          "content": "Add persistence for agents, colors, and chat history",
+          "status": "completed",
+          "priority": "high",
+          "id": "6"
+        },
+        {
+          "content": "Add better modal dialogs for agent deletion",
+          "status": "completed",
+          "priority": "medium",
+          "id": "7"
+        },
+        {
+          "content": "Test session persistence fix to ensure agents maintain context across restarts",
+          "status": "completed",
+          "priority": "high",
+          "id": "8"
+        },
+        {
+          "content": "Add mobile-friendly responsive CSS to the web interface",
+          "status": "completed",
+          "priority": "medium",
+          "id": "9"
+        },
+        {
+          "content": "Fix session ID capture from Claude Code's streaming JSON response",
+          "status": "completed",
+          "priority": "high",
+          "id": "10"
+        },
+        {
+          "content": "Add stable UUID for Memory Bank to handle floating session IDs",
+          "status": "completed",
+          "priority": "high",
+          "id": "11"
+        },
+        {
+          "content": "Fix UUID persistence for legacy agents on startup",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "12"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/home/kevlar/projects/claude-code-agent/web-server.js",
+      "old_string": "// Load persisted data\nfunction loadPersistedData() {\n  // Load agents\n  if (fs.existsSync(AGENTS_FILE)) {\n    try {\n      const agentsData = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8'));\n      console.log('Loading persisted agents:', agentsData.length);\n      \n      // Restore agents with their session IDs and roles\n      agentsData.forEach(agentData => {\n        agents.set(agentData.name, {\n          color: agentData.color,\n          lastActivity: new Date(agentData.lastActivity),\n          sessionId: agentData.sessionId,\n          role: agentData.role,\n          uuid: agentData.uuid || uuidv4(), // Generate UUID if missing (for existing agents)\n          session: null // Will be restored when needed\n        });\n      });\n    } catch (error) {\n      console.error('Error loading agents:', error);\n    }\n  }",
+      "new_string": "// Load persisted data\nfunction loadPersistedData() {\n  // Load agents\n  if (fs.existsSync(AGENTS_FILE)) {\n    try {\n      const agentsData = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8'));\n      console.log('Loading persisted agents:', agentsData.length);\n      \n      let needsSaving = false;\n      \n      // Restore agents with their session IDs and roles\n      agentsData.forEach(agentData => {\n        let uuid = agentData.uuid;\n        if (!uuid) {\n          // Generate UUID if missing (for existing agents)\n          uuid = uuidv4();\n          needsSaving = true;\n          console.log(`Generated UUID for legacy agent ${agentData.name}: ${uuid.substring(0, 8)}`);\n        }\n        \n        agents.set(agentData.name, {\n          color: agentData.color,\n          lastActivity: new Date(agentData.lastActivity),\n          sessionId: agentData.sessionId,\n          role: agentData.role,\n          uuid: uuid,\n          session: null // Will be restored when needed\n        });\n      });\n      \n      // Save if we generated any new UUIDs\n      if (needsSaving) {\n        console.log('Persisting newly generated UUIDs...');\n        saveAgents();\n      }\n    } catch (error) {\n      console.error('Error loading agents:', error);\n    }\n  }"
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Modify existing multi-agent system to add Memory Bank integration",
+          "status": "completed",
+          "priority": "high",
+          "id": "3"
+        },
+        {
+          "content": "Add memory retrieval and context injection file + PreToolUse hook",
+          "status": "completed",
+          "priority": "high",
+          "id": "4"
+        },
+        {
+          "content": "Fix web server agent creation to show initial response",
+          "status": "completed",
+          "priority": "high",
+          "id": "5"
+        },
+        {
+          "content": "Add persistence for agents, colors, and chat history",
+          "status": "completed",
+          "priority": "high",
+          "id": "6"
+        },
+        {
+          "content": "Add better modal dialogs for agent deletion",
+          "status": "completed",
+          "priority": "medium",
+          "id": "7"
+        },
+        {
+          "content": "Test session persistence fix to ensure agents maintain context across restarts",
+          "status": "completed",
+          "priority": "high",
+          "id": "8"
+        },
+        {
+          "content": "Add mobile-friendly responsive CSS to the web interface",
+          "status": "completed",
+          "priority": "medium",
+          "id": "9"
+        },
+        {
+          "content": "Fix session ID capture from Claude Code's streaming JSON response",
+          "status": "completed",
+          "priority": "high",
+          "id": "10"
+        },
+        {
+          "content": "Add stable UUID for Memory Bank to handle floating session IDs",
+          "status": "completed",
+          "priority": "high",
+          "id": "11"
+        },
+        {
+          "content": "Fix UUID persistence for legacy agents on startup",
+          "status": "completed",
+          "priority": "high",
+          "id": "12"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git add -A && git commit -m \"$(cat <<'EOF'\nImplement UUID-based Memory Bank integration for stable agent identifiers\n\n- Add stable UUID generation for all agents (new and legacy)\n- Update Memory Bank storage calls to use UUID scope instead of floating session IDs\n- Persist UUIDs immediately when generated for legacy agents on startup\n- Session IDs can now change as Claude Code dictates without breaking Memory Bank continuity\n- All existing agents now have stable UUIDs for consistent Memory Bank operations\nEOF\n)\"",
+      "description": "Commit UUID-based Memory Bank integration changes"
+    }
   }
 ]

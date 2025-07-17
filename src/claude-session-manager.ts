@@ -335,7 +335,7 @@ export class ClaudeSessionManager {
   /**
    * Designate an agent with an initial prompt and create session
    */
-  async designateAgent(agentName: string, initialPrompt: string, eventHandler?: (event: any) => void): Promise<AgentSession> {
+  async designateAgent(agentName: string, initialPrompt: string, eventHandler?: (event: any) => void, memoryBankUuid?: string): Promise<AgentSession> {
     this.logDebug(`Creating agent: ${agentName} with prompt: ${initialPrompt.substring(0, 100)}...`);
     if (!this.config.suppressConsoleOutput) {
       console.log(chalk.blue(`🔄 Starting agent creation for ${agentName}...`));
@@ -346,11 +346,11 @@ export class ClaudeSessionManager {
 
 For this conversation, you will roleplay as this character. When I ask "What is your name?" or similar questions, respond as this character would. Acknowledge that you understand your role.`;
     
-    const response = await this.executeClaudeCommandStreaming(setupPrompt, undefined, agentName, eventHandler);
+    const response = await this.executeClaudeCommandStreaming(setupPrompt, undefined, agentName, eventHandler, memoryBankUuid);
     
     const session: AgentSession = {
       agentName,
-      sessionId: response.session_id,
+      sessionId: response.session_id, // Always use the session ID that Claude Code returned
       lastPrompt: initialPrompt,
       lastResponse: response.result,
       createdAt: new Date(),
@@ -400,6 +400,14 @@ For this conversation, you will roleplay as this character. When I ask "What is 
 
     await this.saveSessions();
     return response;
+  }
+
+  /**
+   * Resume session with a specific session ID (for web server)
+   */
+  async resumeAgentWithSessionId(sessionId: string, prompt: string, eventHandler?: (event: any) => void, memoryBankUuid?: string): Promise<ClaudeResponse> {
+    this.logDebug(`Resuming session: ${sessionId.substring(0, 8)} with prompt: ${prompt.substring(0, 100)}...`);
+    return await this.executeClaudeCommandStreaming(prompt, sessionId, 'Agent', eventHandler, memoryBankUuid);
   }
 
   /**
@@ -466,7 +474,7 @@ For this conversation, you will roleplay as this character. When I ask "What is 
   /**
    * Execute Claude command with streaming output for agent creation
    */
-  private async executeClaudeCommandStreaming(prompt: string, sessionId?: string, agentName?: string, eventHandler?: (event: any) => void): Promise<ClaudeResponse> {
+  private async executeClaudeCommandStreaming(prompt: string, sessionId?: string, agentName?: string, eventHandler?: (event: any) => void, memoryBankUuid?: string): Promise<ClaudeResponse> {
     // Retrieve relevant memories before processing (MUST be awaited)
     if (sessionId && agentName) {
       // Build richer context from recent USER messages only (no assistant responses)
@@ -477,7 +485,7 @@ For this conversation, you will roleplay as this character. When I ask "What is 
       const contextHint = [...recentUserContext, prompt].join(' '); // NO substring - keep full context
       
       this.logDebug(`About to retrieve memories for streaming command, session: ${sessionId}, expanded hint: "${contextHint.substring(0, 100)}..."`);
-      await this.retrieveMemories(sessionId, contextHint);
+      await this.retrieveMemories(memoryBankUuid || sessionId, contextHint);
     }
 
     return new Promise((resolve, reject) => {
@@ -499,7 +507,7 @@ For this conversation, you will roleplay as this character. When I ask "What is 
 
       // Store the user's prompt in Memory Bank  
       if (sessionId) {
-        this.storeConversationInMemoryBank(sessionId, 'user_prompt', { text: prompt });
+        this.storeConversationInMemoryBank(memoryBankUuid || sessionId, 'user_prompt', { text: prompt });
       }
 
       const claudeProcess = spawn(this.config.claudeCommand, args, {
@@ -508,6 +516,7 @@ For this conversation, you will roleplay as this character. When I ask "What is 
       });
 
       let finalResponse: ClaudeResponse | null = null;
+      let capturedSessionId: string | null = null;
 
       claudeProcess.stdout.on('data', (data) => {
         const lines = data.toString().split('\n').filter((line: string) => line.trim());
@@ -516,14 +525,30 @@ For this conversation, you will roleplay as this character. When I ask "What is 
           try {
             const jsonData = JSON.parse(line);
             
+            // CRITICAL: Always capture session ID from ANY JSON response that has it
+            if (jsonData.session_id) {
+              if (!capturedSessionId) {
+                capturedSessionId = jsonData.session_id;
+                if (!sessionId) {
+                  console.log(chalk.blue(`🔧 ${agentName || 'Claude'} system: New session ${capturedSessionId?.substring(0, 8)}... initialized`));
+                }
+              } else if (capturedSessionId !== jsonData.session_id) {
+                // Session ID changed - update our stored ID
+                console.log(chalk.yellow(`🔧 ${agentName || 'Claude'} session ID changed from ${capturedSessionId.substring(0, 8)} to ${jsonData.session_id.substring(0, 8)}`));
+                capturedSessionId = jsonData.session_id;
+              }
+            }
+            
             switch (jsonData.type) {
               case 'system':
-                if (!this.config.suppressConsoleOutput) {
-                  console.log(chalk.blue(`🔧 ${agentName || 'Claude'} system: Session ${jsonData.session_id?.substring(0, 8)}... initialized`));
-                }
-                // Store system initialization
                 if (sessionId) {
-                  this.storeConversationInMemoryBank(sessionId, 'system', { session_id: jsonData.session_id });
+                  console.log(chalk.blue(`🔧 ${agentName || 'Claude'} system: Resuming session ${sessionId.substring(0, 8)}... initialized`));
+                }
+                
+                // Store system initialization
+                const systemSessionId = sessionId || capturedSessionId;
+                if (systemSessionId) {
+                  this.storeConversationInMemoryBank(memoryBankUuid || systemSessionId, 'system', { session_id: jsonData.session_id });
                 }
                 break;
                 
@@ -604,8 +629,9 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                   }
                   
                   // Store assistant message in Memory Bank
-                  if (sessionId) {
-                    this.storeConversationInMemoryBank(sessionId, 'assistant', message);
+                  const assistantSessionId = sessionId || capturedSessionId;
+                  if (assistantSessionId) {
+                    this.storeConversationInMemoryBank(memoryBankUuid || assistantSessionId, 'assistant', message);
                   }
                 }
                 break;
@@ -638,16 +664,22 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                   }
                 }
                 // Store user message/tool results
-                if (sessionId) {
-                  this.storeConversationInMemoryBank(sessionId, 'user', jsonData);
+                const userSessionId = sessionId || capturedSessionId;
+                if (userSessionId) {
+                  this.storeConversationInMemoryBank(memoryBankUuid || userSessionId, 'user', jsonData);
                 }
                 break;
                 
               case 'result':
                 finalResponse = jsonData;
+                // Use captured session ID if this is a new session
+                if (!sessionId && capturedSessionId && finalResponse) {
+                  finalResponse.session_id = capturedSessionId;
+                }
                 // Store final result and flush buffer
-                if (sessionId) {
-                  this.storeConversationInMemoryBank(sessionId, 'result', jsonData);
+                const resultSessionId = sessionId || capturedSessionId;
+                if (resultSessionId) {
+                  this.storeConversationInMemoryBank(memoryBankUuid || resultSessionId, 'result', jsonData);
                   this.flushConversationBuffer(); // Ensure all data is stored
                 }
                 break;
@@ -657,8 +689,9 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                   console.log(chalk.gray(`📄 ${agentName || 'Claude'} (${jsonData.type}): Processing...`));
                 }
                 // Store other message types
-                if (sessionId) {
-                  this.storeConversationInMemoryBank(sessionId, jsonData.type, jsonData);
+                const otherSessionId = sessionId || capturedSessionId;
+                if (otherSessionId) {
+                  this.storeConversationInMemoryBank(memoryBankUuid || otherSessionId, jsonData.type, jsonData);
                 }
                 break;
             }
