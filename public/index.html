@@ -356,6 +356,8 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                     addMessage(data.content, 'assistant', data.color, data.agent);
                 } else if (data.type === 'tool_use') {
                     addToolUseMessage(data.tool_name, data.description, data.input, data.color, data.agent);
+                } else if (data.type === 'user_message') {
+                    addMessage(data.content, 'user', data.color, data.agent);
                 }
             };
 
@@ -594,6 +596,13 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message tool-use';
             
+            // Set the agent's color as background for tool use messages
+            if (color) {
+                const rgb = hexToRgb(color);
+                messageDiv.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
+                messageDiv.style.borderLeft = `3px solid ${color}`;
+            }
+            
             const timestamp = new Date().toLocaleTimeString();
             const displayName = agentName || currentAgent?.name || 'Assistant';
             
@@ -608,7 +617,7 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
             }
             
             messageDiv.innerHTML = `
-                <div class="message-header" style="color: #f59e0b">
+                <div class="message-header" style="color: ${color || '#f59e0b'}">
                     🔧 ${displayName} • ${timestamp}
                 </div>
                 <div>
@@ -643,7 +652,7 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                 return;
             }
 
-            addMessage(message, 'user');
+            // Don't add message locally - it will come back via broadcast
             input.value = '';
             input.disabled = true;
             document.getElementById('sendButton').disabled = true;

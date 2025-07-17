@@ -349,6 +349,14 @@ app.post('/api/message/:agentName', async (req, res) => {
       agent: agentName
     });
     
+    // Broadcast user message to all connected clients
+    broadcastToAllClients({
+      type: 'user_message',
+      agent: agentName,
+      content: message,
+      color: agent.color
+    });
+    
     // Event handler for streaming events during conversation
     const eventHandler = (event) => {
       
