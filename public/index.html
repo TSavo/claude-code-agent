@@ -340,11 +340,62 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                 const history = await response.json();
                 const chatArea = document.getElementById('chatArea');
                 chatArea.innerHTML = '';
+                
+                // Track tool use messages for pairing with results
+                const toolUseMessages = new Map();
+                
                 history.forEach(msg => {
                     if (msg.type === 'user') {
                         addMessage(msg.content, 'user', null, null, false);
                     } else if (msg.type === 'assistant') {
                         addMessage(msg.content, 'assistant', msg.color, msg.agent, false);
+                    } else if (msg.type === 'tool_use') {
+                        // Create tool use message
+                        addToolUseMessage(msg.tool_name, msg.description, msg.input, msg.tool_use_id, msg.color, msg.agent);
+                        
+                        // If this tool use has a result, update it immediately
+                        if (msg.completed && msg.result_content !== undefined) {
+                            const toolUseElements = Array.from(chatArea.querySelectorAll('.message.tool-use'));
+                            const matchingToolUse = toolUseElements.find(elem => 
+                                elem.getAttribute('data-tool-use-id') === msg.tool_use_id
+                            );
+                            
+                            if (matchingToolUse) {
+                                const toolStatus = matchingToolUse.querySelector('.tool-status');
+                                if (toolStatus) {
+                                    let resultDisplay = '';
+                                    if (typeof msg.result_content === 'string') {
+                                        resultDisplay = msg.result_content;
+                                    } else if (msg.result_content && typeof msg.result_content === 'object') {
+                                        resultDisplay = JSON.stringify(msg.result_content, null, 2);
+                                    } else {
+                                        resultDisplay = String(msg.result_content);
+                                    }
+                                    
+                                    if (resultDisplay.trim()) {
+                                        toolStatus.innerHTML = `
+                                            <div class="tool-result-section">
+                                                <strong>✅ Result:</strong>
+                                                <div class="tool-details">
+                                                    <pre class="tool-output">${resultDisplay}</pre>
+                                                </div>
+                                            </div>
+                                        `;
+                                    } else {
+                                        toolStatus.innerHTML = '<div class="tool-result-section"><strong>✅ Completed</strong></div>';
+                                    }
+                                    
+                                    // Change the header icon to show completion
+                                    const header = matchingToolUse.querySelector('.message-header');
+                                    if (header) {
+                                        header.innerHTML = header.innerHTML.replace('🔧', '✅');
+                                    }
+                                }
+                            }
+                        }
+                    } else if (msg.type === 'tool_result') {
+                        // Legacy: Handle separate tool_result entries (fallback)
+                        addStandaloneToolResult(msg.content, msg.color, msg.agent);
                     }
                 });
                 

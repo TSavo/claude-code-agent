@@ -216,6 +216,17 @@ app.post('/api/agents', async (req, res) => {
           });
         }
       } else if (event.type === 'tool_use') {
+        // Add to chat history
+        addToChatHistory({
+          type: 'tool_use',
+          agent: name,
+          tool_name: event.data.name,
+          description: event.data.description,
+          input: event.data.input,
+          tool_use_id: event.data.tool_use_id,
+          color: agentData.color
+        });
+        
         // Broadcast tool use events
         broadcastToAllClients({
           type: 'tool_use',
@@ -228,6 +239,28 @@ app.post('/api/agents', async (req, res) => {
         });
       } else if (event.type === 'tool_result') {
         console.log('DEBUG: Received tool_result event (agent creation):', JSON.stringify(event, null, 2));
+        
+        // Find and update the corresponding tool_use message in chat history
+        const toolUseIndex = chatHistory.findIndex(msg => 
+          msg.type === 'tool_use' && msg.tool_use_id === event.data.tool_use_id
+        );
+        
+        if (toolUseIndex !== -1) {
+          // Update the existing tool_use message with the result
+          chatHistory[toolUseIndex].result_content = event.data.content;
+          chatHistory[toolUseIndex].completed = true;
+          saveChatHistory();
+        } else {
+          // Fallback: add as separate tool_result entry
+          addToChatHistory({
+            type: 'tool_result',
+            agent: name,
+            content: event.data.content,
+            tool_use_id: event.data.tool_use_id,
+            color: agentData.color
+          });
+        }
+        
         // Broadcast tool result events
         broadcastToAllClients({
           type: 'tool_result',
@@ -387,6 +420,17 @@ app.post('/api/message/:agentName', async (req, res) => {
           });
         }
       } else if (event.type === 'tool_use') {
+        // Add to chat history
+        addToChatHistory({
+          type: 'tool_use',
+          agent: agentName,
+          tool_name: event.data.name,
+          description: event.data.description,
+          input: event.data.input,
+          tool_use_id: event.data.tool_use_id,
+          color: agent.color
+        });
+        
         // Broadcast tool use events
         broadcastToAllClients({
           type: 'tool_use',
@@ -399,6 +443,28 @@ app.post('/api/message/:agentName', async (req, res) => {
         });
       } else if (event.type === 'tool_result') {
         console.log('DEBUG: Received tool_result event:', JSON.stringify(event, null, 2));
+        
+        // Find and update the corresponding tool_use message in chat history
+        const toolUseIndex = chatHistory.findIndex(msg => 
+          msg.type === 'tool_use' && msg.tool_use_id === event.data.tool_use_id
+        );
+        
+        if (toolUseIndex !== -1) {
+          // Update the existing tool_use message with the result
+          chatHistory[toolUseIndex].result_content = event.data.content;
+          chatHistory[toolUseIndex].completed = true;
+          saveChatHistory();
+        } else {
+          // Fallback: add as separate tool_result entry
+          addToChatHistory({
+            type: 'tool_result',
+            agent: agentName,
+            content: event.data.content,
+            tool_use_id: event.data.tool_use_id,
+            color: agent.color
+          });
+        }
+        
         // Broadcast tool result events
         broadcastToAllClients({
           type: 'tool_result',
