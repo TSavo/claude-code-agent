@@ -206,21 +206,13 @@ export class ClaudeSessionManager {
         timestamp: new Date()
       });
       
-      // Store immediately in Memory Bank using Python script
-      const result = await execAsync(`python3 "${this.memoryBankScriptPath}" store "${claudeSessionId}" "${type}" "${textContent.replace(/"/g, '\\"')}"`);
-      this.logDebug(`Storage result: ${result.stdout}`);
-      if (result.stderr) {
-        this.logDebug(`Storage stderr: ${result.stderr}`);
-        // Also log Memory Bank debug output to console
-        if (!this.config.suppressConsoleOutput && result.stderr.includes('🧠')) {
-          console.log(result.stderr);
-        }
-      }
+      // Store immediately in Memory Bank using Python script (fire-and-forget)
+      this.storeInMemoryBankAsync(claudeSessionId, type, textContent);
       
-      // Periodically generate memories
+      // Periodically generate memories (fire-and-forget)
       if (this.conversationBuffer.length >= 5) {
         this.logDebug(`Buffer reached 5 items, generating memories for ${claudeSessionId}`);
-        await this.generateMemories(claudeSessionId);
+        this.generateMemoriesAsync(claudeSessionId);
         this.conversationBuffer = []; // Clear buffer after generating memories
       }
       
@@ -283,6 +275,48 @@ export class ClaudeSessionManager {
         console.log(chalk.yellow(`⚠️ Memory retrieval failed: ${error instanceof Error ? error.message : error}`));
       }
     }
+  }
+
+  /**
+   * Store conversation data in Memory Bank (async, fire-and-forget)
+   */
+  private storeInMemoryBankAsync(claudeSessionId: string, type: string, textContent: string): void {
+    // Fire-and-forget async execution
+    (async () => {
+      try {
+        const result = await execAsync(`python3 "${this.memoryBankScriptPath}" store "${claudeSessionId}" "${type}" "${textContent.replace(/"/g, '\\"')}"`);
+        this.logDebug(`Storage result: ${result.stdout}`);
+        if (result.stderr) {
+          this.logDebug(`Storage stderr: ${result.stderr}`);
+          // Also log Memory Bank debug output to console
+          if (!this.config.suppressConsoleOutput && result.stderr.includes('🧠')) {
+            console.log(result.stderr);
+          }
+        }
+      } catch (error) {
+        this.logDebug(`Memory Bank storage failed: ${error instanceof Error ? error.message : error}`);
+        if (this.config.verbose && !this.config.suppressConsoleOutput) {
+          console.log(chalk.yellow(`⚠️ Memory Bank storage failed: ${error instanceof Error ? error.message : error}`));
+        }
+      }
+    })();
+  }
+
+  /**
+   * Generate memories from accumulated conversation data (async, fire-and-forget)
+   */
+  private generateMemoriesAsync(claudeSessionId: string): void {
+    // Fire-and-forget async execution
+    (async () => {
+      try {
+        await this.generateMemories(claudeSessionId);
+      } catch (error) {
+        this.logDebug(`Memory generation failed: ${error instanceof Error ? error.message : error}`);
+        if (this.config.verbose && !this.config.suppressConsoleOutput) {
+          console.log(chalk.yellow(`⚠️ Memory generation failed: ${error instanceof Error ? error.message : error}`));
+        }
+      }
+    })();
   }
 
   /**

@@ -1078,7 +1078,9 @@
     },
     "tool_use_id": "toolu_01FQmMghynv8DsKDhB6jx8Yh",
     "color": "#d2dd3c",
-    "timestamp": "2025-07-17T07:10:39.209Z"
+    "timestamp": "2025-07-17T07:10:39.209Z",
+    "result_content": "",
+    "completed": true
   },
   {
     "type": "tool_use",
@@ -1091,7 +1093,9 @@
     },
     "tool_use_id": "toolu_01M4Xvi2Ypj8ZTy6C44HurCp",
     "color": "#d2dd3c",
-    "timestamp": "2025-07-17T07:10:40.438Z"
+    "timestamp": "2025-07-17T07:10:40.438Z",
+    "result_content": "[main 5fe802f] Update web interface tracking and memory bank debug logging\n 3 files changed, 119 insertions(+), 8 deletions(-)",
+    "completed": true
   },
   {
     "type": "tool_use",
@@ -1104,6 +1108,118 @@
     },
     "tool_use_id": "toolu_01G1Svs8ySS4AbGxRDotjcdd",
     "color": "#d2dd3c",
-    "timestamp": "2025-07-17T07:10:40.516Z"
+    "timestamp": "2025-07-17T07:10:40.516Z",
+    "result_content": "To https://github.com/TSavo/claude-code-agent.git\n   8c3b530..5fe802f  main -> main",
+    "completed": true
+  },
+  {
+    "type": "assistant",
+    "agent": "Mr. Blonde",
+    "content": "Done! Successfully committed and pushed the changes to GitHub.",
+    "color": "#d2dd3c",
+    "timestamp": "2025-07-17T07:12:11.017Z"
+  },
+  {
+    "type": "user",
+    "content": "What was the last thing you remember doing?",
+    "agent": "Mr. Blonde",
+    "timestamp": "2025-07-17T07:18:10.257Z"
+  },
+  {
+    "type": "assistant",
+    "agent": "Mr. Blonde",
+    "content": "Looking at the recent git commits, the last thing I remember working on was updating the web interface tracking and memory bank debug logging. Specifically, I was enhancing the tool result tracking and chat history management system - commit `5fe802f` shows I was working on memory bank debug logging, and before that I was integrating memory bank functionality and improving tool use debugging.\n\nThe current state shows I have some modified files in the session manager and web chat history components that I was actively working on.",
+    "color": "#d2dd3c",
+    "timestamp": "2025-07-17T07:18:36.434Z"
+  },
+  {
+    "type": "user",
+    "content": "git commit again",
+    "agent": "Mr. Blonde",
+    "timestamp": "2025-07-17T07:18:45.150Z"
+  },
+  {
+    "type": "tool_use",
+    "agent": "Mr. Blonde",
+    "tool_name": "Bash",
+    "description": "Check current git status",
+    "input": {
+      "command": "git status",
+      "description": "Check current git status"
+    },
+    "tool_use_id": "toolu_019MXevskWUXKK4t6rkJBuqr",
+    "color": "#d2dd3c",
+    "timestamp": "2025-07-17T07:18:53.960Z",
+    "result_content": "On branch main\nYour branch is up to date with 'origin/main'.\n\nChanges not staged for commit:\n  (use \"git add <file>...\" to update what will be committed)\n  (use \"git restore <file>...\" to discard changes in working directory)\n\tmodified:   .web-chat-history.json\n\tmodified:   .web-claude-sessions.json\n\tmodified:   src/claude-session-manager.ts\n\nUntracked files:\n  (use \"git add <file>...\" to include in what will be committed)\n\t=1.100.0\n\nno changes added to commit (use \"git add\" and/or \"git commit -a\")",
+    "completed": true
+  },
+  {
+    "type": "tool_use",
+    "agent": "Mr. Blonde",
+    "tool_name": "Bash",
+    "description": "Show staged and unstaged changes",
+    "input": {
+      "command": "git diff",
+      "description": "Show staged and unstaged changes"
+    },
+    "tool_use_id": "toolu_01HauwAdZRZPc5nmCujqsUiM",
+    "color": "#d2dd3c",
+    "timestamp": "2025-07-17T07:18:54.559Z",
+    "result_content": "diff --git a/.web-chat-history.json b/.web-chat-history.json\nindex f0269e4..5740e24 100644\n--- a/.web-chat-history.json\n+++ b/.web-chat-history.json\n@@ -1078,7 +1078,9 @@\n     },\n     \"tool_use_id\": \"toolu_01FQmMghynv8DsKDhB6jx8Yh\",\n     \"color\": \"#d2dd3c\",\n-    \"timestamp\": \"2025-07-17T07:10:39.209Z\"\n+    \"timestamp\": \"2025-07-17T07:10:39.209Z\",\n+    \"result_content\": \"\",\n+    \"completed\": true\n   },\n   {\n     \"type\": \"tool_use\",\n@@ -1091,7 +1093,9 @@\n     },\n     \"tool_use_id\": \"toolu_01M4Xvi2Ypj8ZTy6C44HurCp\",\n     \"color\": \"#d2dd3c\",\n-    \"timestamp\": \"2025-07-17T07:10:40.438Z\"\n+    \"timestamp\": \"2025-07-17T07:10:40.438Z\",\n+    \"result_content\": \"[main 5fe802f] Update web interface tracking and memory bank debug logging\\n 3 files changed, 119 insertions(+), 8 deletions(-)\",\n+    \"completed\": true\n   },\n   {\n     \"type\": \"tool_use\",\n@@ -1104,6 +1108,75 @@\n     },\n     \"tool_use_id\": \"toolu_01G1Svs8ySS4AbGxRDotjcdd\",\n     \"color\": \"#d2dd3c\",\n-    \"timestamp\": \"2025-07-17T07:10:40.516Z\"\n+    \"timestamp\": \"2025-07-17T07:10:40.516Z\",\n+    \"result_content\": \"To https://github.com/TSavo/claude-code-agent.git\\n   8c3b530..5fe802f  main -> main\",\n+    \"completed\": true\n+  },\n+  {\n+    \"type\": \"assistant\",\n+    \"agent\": \"Mr. Blonde\",\n+    \"content\": \"Done! Successfully committed and pushed the changes to GitHub.\",\n+    \"color\": \"#d2dd3c\",\n+    \"timestamp\": \"2025-07-17T07:12:11.017Z\"\n+  },\n+  {\n+    \"type\": \"user\",\n+    \"content\": \"What was the last thing you remember doing?\",\n+    \"agent\": \"Mr. Blonde\",\n+    \"timestamp\": \"2025-07-17T07:18:10.257Z\"\n+  },\n+  {\n+    \"type\": \"assistant\",\n+    \"agent\": \"Mr. Blonde\",\n+    \"content\": \"Looking at the recent git commits, the last thing I remember working on was updating the web interface tracking and memory bank debug logging. Specifically, I was enhancing the tool result tracking and chat history management system - commit `5fe802f` shows I was working on memory bank debug logging, and before that I was integrating memory bank functionality and improving tool use debugging.\\n\\nThe current state shows I have some modified files in the session manager and web chat history components that I was actively working on.\",\n+    \"color\": \"#d2dd3c\",\n+    \"timestamp\": \"2025-07-17T07:18:36.434Z\"\n+  },\n+  {\n+    \"type\": \"user\",\n+    \"content\": \"git commit again\",\n+    \"agent\": \"Mr. Blonde\",\n+    \"timestamp\": \"2025-07-17T07:18:45.150Z\"\n+  },\n+  {\n+    \"type\": \"tool_use\",\n+    \"agent\": \"Mr. Blonde\",\n+    \"tool_name\": \"Bash\",\n+    \"description\": \"Check current git status\",\n+    \"input\": {\n+      \"command\": \"git status\",\n+      \"description\": \"Check current git status\"\n+    },\n+    \"tool_use_id\": \"toolu_019MXevskWUXKK4t6rkJBuqr\",\n+    \"color\": \"#d2dd3c\",\n+    \"timestamp\": \"2025-07-17T07:18:53.960Z\",\n+    \"result_content\": \"On branch main\\nYour branch is up to date with 'origin/main'.\\n\\nChanges not staged for commit:\\n  (use \\\"git add <file>...\\\" to update what will be committed)\\n  (use \\\"git restore <file>...\\\" to discard changes in working directory)\\n\\tmodified:   .web-chat-history.json\\n\\tmodified:   .web-claude-sessions.json\\n\\tmodified:   src/claude-session-manager.ts\\n\\nUntracked files:\\n  (use \\\"git add <file>...\\\" to include in what will be committed)\\n\\t=1.100.0\\n\\nno changes added to commit (use \\\"git add\\\" and/or \\\"git commit -a\\\")\",\n+    \"completed\": true\n+  },\n+  {\n+    \"type\": \"tool_use\",\n+    \"agent\": \"Mr. Blonde\",\n+    \"tool_name\": \"Bash\",\n+    \"description\": \"Show staged and unstaged changes\",\n+    \"input\": {\n+      \"command\": \"git diff\",\n+      \"description\": \"Show staged and unstaged changes\"\n+    },\n+    \"tool_use_id\": \"toolu_01HauwAdZRZPc5nmCujqsUiM\",\n+    \"color\": \"#d2dd3c\",\n+    \"timestamp\": \"2025-07-17T07:18:54.559Z\"\n+  },\n+  {\n+    \"type\": \"tool_use\",\n+    \"agent\": \"Mr. Blonde\",\n+    \"tool_name\": \"Bash\",\n+    \"description\": \"Show recent commit messages\",\n+    \"input\": {\n+      \"command\": \"git log --oneline -5\",\n+      \"description\": \"Show recent commit messages\"\n+    },\n+    \"tool_use_id\": \"toolu_012jiZ1VhM8Er9LRoSuZpBqY\",\n+    \"color\": \"#d2dd3c\",\n+    \"timestamp\": \"2025-07-17T07:18:54.603Z\"\n   }\n ]\n\\ No newline at end of file\ndiff --git a/.web-claude-sessions.json b/.web-claude-sessions.json\nindex d3c8339..80f154d 100644\n--- a/.web-claude-sessions.json\n+++ b/.web-claude-sessions.json\n@@ -78,11 +78,11 @@\n   \"Mr. Blonde\": {\n     \"agentName\": \"Mr. Blonde\",\n     \"sessionId\": \"97befa4d-e46f-4373-a0dc-b73373aa6a2a\",\n-    \"lastPrompt\": \"gh push please and commit\",\n+    \"lastPrompt\": \"What was the last thing you remember doing?\",\n     \"createdAt\": \"2025-07-17T04:34:43.869Z\",\n-    \"lastUsedAt\": \"2025-07-17T07:01:56.269Z\",\n-    \"totalCost\": 1.6758724499999997,\n-    \"totalTurns\": 239,\n+    \"lastUsedAt\": \"2025-07-17T07:18:36.434Z\",\n+    \"totalCost\": 1.7437837499999997,\n+    \"totalTurns\": 255,\n     \"context\": [\n       \"Can you look at the mobile view? I need the header and footer pinned to the top and bottom and the whole thing properly sized to the viewport\",\n       null,\n@@ -90,10 +90,6 @@\n       null,\n       \"Can you look at the mobile view? I need the header and footer pinned to the top and bottom and the whole thing properly sized to the viewport\",\n       null,\n-      \"Can you look at the mobile view? I need the header and footer pinned to the top and bottom and the whole thing properly sized to the viewport\",\n-      null,\n-      \"Can you look at the mobile view? I need the header and footer pinned to the top and bottom and the whole thing properly sized to the viewport\",\n-      null,\n       \"What is your name?\",\n       \"Mr. Blone.\",\n       \"Good. And what is your role?\",\n@@ -123,8 +119,12 @@\n       \"gh push please and commit\",\n       \"Done! Successfully committed and pushed the changes to GitHub.\",\n       \"gh push please and commit\",\n-      \"Done! Successfully committed and pushed the changes to GitHub.\"\n+      \"Done! Successfully committed and pushed the changes to GitHub.\",\n+      \"gh push please and commit\",\n+      \"Done! Successfully committed and pushed the changes to GitHub.\",\n+      \"What was the last thing you remember doing?\",\n+      \"Looking at the recent git commits, the last thing I remember working on was updating the web interface tracking and memory bank debug logging. Specifically, I was enhancing the tool result tracking and chat history management system - commit `5fe802f` shows I was working on memory bank debug logging, and before that I was integrating memory bank functionality and improving tool use debugging.\\n\\nThe current state shows I have some modified files in the session manager and web chat history components that I was actively working on.\"\n     ],\n-    \"lastResponse\": \"Done! Successfully committed and pushed the changes to GitHub.\"\n+    \"lastResponse\": \"Looking at the recent git commits, the last thing I remember working on was updating the web interface tracking and memory bank debug logging. Specifically, I was enhancing the tool result tracking and chat history management system - commit `5fe802f` shows I was working on memory bank debug logging, and before that I was integrating memory bank functionality and improving tool use debugging.\\n\\nThe current state shows I have some modified files in the session manager and web chat history components that I was actively working on.\"\n   }\n }\n\\ No newline at end of file\ndiff --git a/src/claude-session-manager.ts b/src/claude-session-manager.ts\nindex fc0b97e..bd14197 100644\n--- a/src/claude-session-manager.ts\n+++ b/src/claude-session-manager.ts\n@@ -206,21 +206,13 @@ export class ClaudeSessionManager {\n         timestamp: new Date()\r\n       });\r\n       \r\n-      // Store immediately in Memory Bank using Python script\r\n-      const result = await execAsync(`python3 \"${this.memoryBankScriptPath}\" store \"${claudeSessionId}\" \"${type}\" \"${textContent.replace(/\"/g, '\\\\\"')}\"`);\r\n-      this.logDebug(`Storage result: ${result.stdout}`);\r\n-      if (result.stderr) {\r\n-        this.logDebug(`Storage stderr: ${result.stderr}`);\r\n-        // Also log Memory Bank debug output to console\r\n-        if (!this.config.suppressConsoleOutput && result.stderr.includes('🧠')) {\r\n-          console.log(result.stderr);\r\n-        }\r\n-      }\r\n+      // Store immediately in Memory Bank using Python script (fire-and-forget)\r\n+      this.storeInMemoryBankAsync(claudeSessionId, type, textContent);\r\n       \r\n-      // Periodically generate memories\r\n+      // Periodically generate memories (fire-and-forget)\r\n       if (this.conversationBuffer.length >= 5) {\r\n         this.logDebug(`Buffer reached 5 items, generating memories for ${claudeSessionId}`);\r\n-        await this.generateMemories(claudeSessionId);\r\n+        this.generateMemoriesAsync(claudeSessionId);\r\n         this.conversationBuffer = []; // Clear buffer after generating memories\r\n       }\r\n       \r\n@@ -285,6 +277,48 @@ export class ClaudeSessionManager {\n     }\r\n   }\r\n \r\n+  /**\r\n+   * Store conversation data in Memory Bank (async, fire-and-forget)\r\n+   */\r\n+  private storeInMemoryBankAsync(claudeSessionId: string, type: string, textContent: string): void {\r\n+    // Fire-and-forget async execution\r\n+    (async () => {\r\n+      try {\r\n+        const result = await execAsync(`python3 \"${this.memoryBankScriptPath}\" store \"${claudeSessionId}\" \"${type}\" \"${textContent.replace(/\"/g, '\\\\\"')}\"`);\r\n+        this.logDebug(`Storage result: ${result.stdout}`);\r\n+        if (result.stderr) {\r\n+          this.logDebug(`Storage stderr: ${result.stderr}`);\r\n+          // Also log Memory Bank debug output to console\r\n+          if (!this.config.suppressConsoleOutput && result.stderr.includes('🧠')) {\r\n+            console.log(result.stderr);\r\n+          }\r\n+        }\r\n+      } catch (error) {\r\n+        this.logDebug(`Memory Bank storage failed: ${error instanceof Error ? error.message : error}`);\r\n+        if (this.config.verbose && !this.config.suppressConsoleOutput) {\r\n+          console.log(chalk.yellow(`⚠️ Memory Bank storage failed: ${error instanceof Error ? error.message : error}`));\r\n+        }\r\n+      }\r\n+    })();\r\n+  }\r\n+\r\n+  /**\r\n+   * Generate memories from accumulated conversation data (async, fire-and-forget)\r\n+   */\r\n+  private generateMemoriesAsync(claudeSessionId: string): void {\r\n+    // Fire-and-forget async execution\r\n+    (async () => {\r\n+      try {\r\n+        await this.generateMemories(claudeSessionId);\r\n+      } catch (error) {\r\n+        this.logDebug(`Memory generation failed: ${error instanceof Error ? error.message : error}`);\r\n+        if (this.config.verbose && !this.config.suppressConsoleOutput) {\r\n+          console.log(chalk.yellow(`⚠️ Memory generation failed: ${error instanceof Error ? error.message : error}`));\r\n+        }\r\n+      }\r\n+    })();\r\n+  }\r\n+\r\n   /**\r\n    * Flush conversation buffer to ensure all data is stored\r\n    */",
+    "completed": true
+  },
+  {
+    "type": "tool_use",
+    "agent": "Mr. Blonde",
+    "tool_name": "Bash",
+    "description": "Show recent commit messages",
+    "input": {
+      "command": "git log --oneline -5",
+      "description": "Show recent commit messages"
+    },
+    "tool_use_id": "toolu_012jiZ1VhM8Er9LRoSuZpBqY",
+    "color": "#d2dd3c",
+    "timestamp": "2025-07-17T07:18:54.603Z",
+    "result_content": "5fe802f Update web interface tracking and memory bank debug logging\n8c3b530 Update web interface tracking and memory bank integration logging\n787711d Update web interface tracking and memory bank integration\na276d81 Update tool result tracking and enhance chat history management\nf6ca1e8 Update session data and add enhanced tool use debugging",
+    "completed": true
+  },
+  {
+    "type": "tool_use",
+    "agent": "Mr. Blonde",
+    "tool_name": "Bash",
+    "description": "Add all modified files to staging area",
+    "input": {
+      "command": "git add -A",
+      "description": "Add all modified files to staging area"
+    },
+    "tool_use_id": "toolu_01Y5hkMz7Yn4iLtd7R2ZN1cp",
+    "color": "#d2dd3c",
+    "timestamp": "2025-07-17T07:19:26.032Z"
+  },
+  {
+    "type": "tool_use",
+    "agent": "Mr. Blonde",
+    "tool_name": "Bash",
+    "description": "Create commit with message",
+    "input": {
+      "command": "git commit -m \"$(cat <<'EOF'\nUpdate web interface tracking and session management with async memory bank integration\nEOF\n)\"",
+      "description": "Create commit with message"
+    },
+    "tool_use_id": "toolu_017gyK8puvEtjTAGSUS5vR3d",
+    "color": "#d2dd3c",
+    "timestamp": "2025-07-17T07:19:26.851Z"
+  },
+  {
+    "type": "tool_use",
+    "agent": "Mr. Blonde",
+    "tool_name": "Bash",
+    "description": "Confirm commit succeeded",
+    "input": {
+      "command": "git status",
+      "description": "Confirm commit succeeded"
+    },
+    "tool_use_id": "toolu_01JiXzegRXWt3Jytjwc425cw",
+    "color": "#d2dd3c",
+    "timestamp": "2025-07-17T07:19:26.872Z"
   }
 ]
