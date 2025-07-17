@@ -225,6 +225,14 @@ app.post('/api/agents', async (req, res) => {
           input: event.data.input,
           color: agentData.color
         });
+      } else if (event.type === 'tool_result') {
+        // Broadcast tool result events
+        broadcastToAllClients({
+          type: 'tool_result',
+          agent: name,
+          content: event.data.content,
+          color: agentData.color
+        });
       }
     };
     
@@ -383,6 +391,14 @@ app.post('/api/message/:agentName', async (req, res) => {
           tool_name: event.data.name,
           description: event.data.description,
           input: event.data.input,
+          color: agent.color
+        });
+      } else if (event.type === 'tool_result') {
+        // Broadcast tool result events
+        broadcastToAllClients({
+          type: 'tool_result',
+          agent: agentName,
+          content: event.data.content,
           color: agent.color
         });
       }

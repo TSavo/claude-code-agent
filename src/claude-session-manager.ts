@@ -562,6 +562,15 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                 if (!this.config.suppressConsoleOutput) {
                   console.log(chalk.cyan(`📋 ${agentName || 'Claude'} tool results received`));
                 }
+                // Emit tool result event
+                if (eventHandler && jsonData.content) {
+                  const event = {
+                    type: 'tool_result',
+                    agentName: agentName || 'Claude',
+                    data: jsonData
+                  };
+                  eventHandler(event);
+                }
                 // Store user message/tool results
                 if (sessionId) {
                   this.storeConversationInMemoryBank(sessionId, 'user', jsonData);

@@ -136,6 +136,17 @@
         .message.assistant { background: var(--agent-color, #2a4a2a); }
         .message.system { background: #2a2a4a; border-left: 3px solid #6366f1; font-style: italic; }
         .message.tool-use { background: #4a2a4a; border-left: 3px solid #f59e0b; font-family: monospace; }
+        .message.tool-result { background: #2a4a3a; border-left: 3px solid #10B981; font-family: monospace; }
+        .tool-output { 
+            background: #1a1a1a; 
+            padding: 0.5rem; 
+            border-radius: 4px; 
+            margin-top: 0.25rem; 
+            white-space: pre-wrap; 
+            overflow-x: auto; 
+            font-size: 0.9rem;
+            color: #e5e5e5;
+        }
         .message-header { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem; }
         
         /* Mobile Responsive Layout */
@@ -358,6 +369,8 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                     addToolUseMessage(data.tool_name, data.description, data.input, data.color, data.agent);
                 } else if (data.type === 'user_message') {
                     addMessage(data.content, 'user', data.color, data.agent);
+                } else if (data.type === 'tool_result') {
+                    addToolResultMessage(data.content, data.color, data.agent);
                 }
             };
 
@@ -624,6 +637,47 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                     <strong>Using tool:</strong> ${toolName}<br>
                     <em>${description}</em>
                     ${inputDisplay}
+                </div>
+            `;
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function addToolResultMessage(content, color, agentName) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message tool-result';
+            
+            // Set the agent's color as background for tool result messages
+            if (color) {
+                const rgb = hexToRgb(color);
+                messageDiv.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`;
+                messageDiv.style.borderLeft = `3px solid ${color}`;
+            }
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const displayName = agentName || currentAgent?.name || 'Assistant';
+            
+            // Format the tool result content
+            let resultDisplay = '';
+            if (typeof content === 'string') {
+                resultDisplay = content;
+            } else if (content && typeof content === 'object') {
+                resultDisplay = JSON.stringify(content, null, 2);
+            } else {
+                resultDisplay = String(content);
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-header" style="color: ${color || '#10B981'}">
+                    ✅ ${displayName} • ${timestamp}
+                </div>
+                <div>
+                    <strong>Tool Result:</strong>
+                    <div class="tool-details">
+                        <pre class="tool-output">${resultDisplay}</pre>
+                    </div>
                 </div>
             `;
             

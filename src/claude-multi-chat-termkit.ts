@@ -221,7 +221,7 @@ class ClaudeMultiAgentTermKitTUI {
 
   private setupInput(): void {
     // Use grabInput with mouse support for better control including wheel
-    term.grabInput({ mouse: true });
+    term.grabInput({ mouse: 'button' });
     
     // Handle mouse events
     term.on('mouse', (name: string, data: any) => {
@@ -795,9 +795,9 @@ class ClaudeMultiAgentTermKitTUI {
       
       term.moveTo(1, 4 + index);
       if (current) {
-        term.bold[agentColor](`👉 ${status} ${agent.name}\n`);
+        (term.bold as any)[agentColor](`👉 ${status} ${agent.name}\n`);
       } else {
-        term[agentColor](`   ${status} ${agent.name}\n`);
+        (term as any)[agentColor](`   ${status} ${agent.name}\n`);
       }
     });
 
