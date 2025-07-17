@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Build output
+dist/
+build/
+
+# Claude sessions and logs
+.claude-sessions.json
+.claude-multi-chat-sessions.json
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+
+# Google Cloud credentials
+*credentials*.json
+service-account*.json
+
+# Memory Bank data
+~/.claude/memory_contexts/
+~/.claude/memory_bank_sessions.json
+~/.claude/memory_bank_debug.log
+~/.claude/termkit-prefs.json
+
+# OS
+.DS_Store
+Thumbs.db

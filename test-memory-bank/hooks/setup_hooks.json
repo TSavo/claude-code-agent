@@ -1,0 +1,53 @@
+{
+  "description": "Claude Code hooks configuration for Memory Bank integration",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "description": "Load relevant context from Memory Bank before tool execution",
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /home/kevlar/projects/toolstac.com/toolstac.com/test-memory-bank/hooks/save_and_load_context.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "description": "Save tool results and context after successful execution",
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /home/kevlar/projects/toolstac.com/toolstac.com/test-memory-bank/hooks/save_tool_result.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "description": "Save complete session to Memory Bank when conversation ends",
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /home/kevlar/projects/toolstac.com/toolstac.com/test-memory-bank/hooks/save_complete_session.py"
+          }
+        ]
+      }
+    ]
+  },
+  "setup_instructions": {
+    "global": "Copy to ~/.claude/settings.json",
+    "project": "Copy to .claude/settings.json",
+    "local": "Copy to .claude/settings.local.json"
+  },
+  "requirements": [
+    "google-adk[vertexai]",
+    "google-cloud-aiplatform",
+    "GOOGLE_CLOUD_PROJECT environment variable",
+    "GOOGLE_API_KEY environment variable", 
+    "Google Cloud authentication (gcloud auth application-default login)"
+  ]
+}

@@ -1,0 +1,9 @@
+# Google Cloud AI Platform for Memory Bank
+google-cloud-aiplatform
+google-genai
+google-cloud-storage
+
+# Additional dependencies that might be needed
+google-auth
+google-auth-oauthlib
+google-auth-httplib2

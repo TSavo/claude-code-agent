@@ -1,0 +1,26 @@
+{
+  "name": "claude-code-agent",
+  "version": "1.0.0",
+  "description": "Multi-agent terminal interface for Claude Code",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx src/claude-multi-chat-termkit.ts",
+    "start": "tsx src/claude-multi-chat-termkit.ts",
+    "tui": "tsx src/claude-multi-chat-termkit.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["claude", "ai", "agent", "terminal", "tui"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/terminal-kit": "^2.5.7",
+    "chalk": "^5.4.1",
+    "terminal-kit": "^3.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.6",
+    "tsx": "^4.20.3",
+    "typescript": "5.8.3"
+  }
+}
