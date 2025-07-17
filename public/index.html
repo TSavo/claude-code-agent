@@ -380,10 +380,13 @@ You are a creative writing assistant. Help users brainstorm ideas, improve their
                 if (data.type === 'message') {
                     addMessage(data.content, 'assistant', data.color, data.agent);
                 } else if (data.type === 'tool_use') {
+                    console.log('DEBUG: Received tool_use event:', data);
                     addToolUseMessage(data.tool_name, data.description, data.input, data.tool_use_id, data.color, data.agent);
                 } else if (data.type === 'user_message') {
                     addMessage(data.content, 'user', data.color, data.agent);
                 } else if (data.type === 'tool_result') {
+                    console.log('DEBUG: Received tool_result event:', data);
+                    console.log('DEBUG: Current toolMessages map:', Array.from(toolMessages.keys()));
                     updateToolMessageWithResult(data.tool_use_id, data.content, data.color, data.agent);
                 }
             };
