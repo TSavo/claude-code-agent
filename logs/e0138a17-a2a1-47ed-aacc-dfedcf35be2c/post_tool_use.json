@@ -1,0 +1,19 @@
+[
+  {
+    "session_id": "e0138a17-a2a1-47ed-aacc-dfedcf35be2c",
+    "transcript_path": "/home/kevlar/.claude/projects/-home-kevlar-projects-toolstac-com-toolstac-com/e0138a17-a2a1-47ed-aacc-dfedcf35be2c.jsonl",
+    "cwd": "/home/kevlar/projects/claude-code-agent",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /home/kevlar/projects/claude-code-agent && npx tsc src/claude-session-manager.ts --outDir dist --target es2020 --module commonjs --lib es2020 --esModuleInterop --allowSyntheticDefaultImports --strict --skipLibCheck",
+      "description": "Compile just the session manager"
+    },
+    "tool_response": {
+      "stdout": "",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  }
+]

@@ -327,14 +327,14 @@ For this conversation, you will roleplay as this character. When I ask "What is 
   /**
    * Resume session with an agent by name
    */
-  async resumeAgent(agentName: string, prompt: string): Promise<ClaudeResponse> {
+  async resumeAgent(agentName: string, prompt: string, eventHandler?: (event: any) => void): Promise<ClaudeResponse> {
     this.logDebug(`Resuming agent: ${agentName} with prompt: ${prompt.substring(0, 100)}...`);
     const session = this.sessions.get(agentName);
     if (!session) {
       throw new Error(`No session found for agent: ${agentName}`);
     }
 
-    const response = await this.executeClaudeCommand(prompt, session.sessionId);
+    const response = await this.executeClaudeCommandStreaming(prompt, session.sessionId, agentName, eventHandler);
     
     // Update session data
     session.lastPrompt = prompt;
@@ -506,6 +506,20 @@ For this conversation, you will roleplay as this character. When I ask "What is 
                       } else if (item.type === 'tool_use') {
                         if (!this.config.suppressConsoleOutput) {
                           console.log(chalk.magenta(`🔧 ${agentName || 'Claude'} using ${item.name}: ${item.input?.description || 'Executing tool'}`));
+                        }
+                        // Emit tool use event
+                        if (eventHandler) {
+                          const event = {
+                            type: 'tool_use',
+                            agentName: agentName || 'Claude',
+                            data: { 
+                              type: 'tool_use', 
+                              name: item.name,
+                              input: item.input,
+                              description: item.input?.description || 'Executing tool'
+                            }
+                          };
+                          eventHandler(event);
                         }
                       }
                     });

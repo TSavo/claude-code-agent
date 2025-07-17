@@ -186,6 +186,29 @@
             font-style: italic;
         }
         
+        .message.tool-use {
+            background: #4a2a4a;
+            border-left: 3px solid #f59e0b;
+            font-family: monospace;
+        }
+        
+        .tool-details {
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .tool-input {
+            background: #2a2a2a;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.25rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        
         .message-header {
             font-size: 0.9rem;
             opacity: 0.8;
@@ -431,6 +454,9 @@
                 if (data.type === 'message') {
                     // Add messages from any agent to the global chat
                     addMessage(data.content, 'assistant', data.color, data.agent);
+                } else if (data.type === 'tool_use') {
+                    // Add tool use events
+                    addToolUseMessage(data.tool_name, data.description, data.input, data.color, data.agent);
                 }
             };
 
@@ -676,6 +702,39 @@
             if (shouldScroll) {
                 chatArea.scrollTop = chatArea.scrollHeight;
             }
+        }
+
+        function addToolUseMessage(toolName, description, input, color, agentName) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message tool-use';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const displayName = agentName || currentAgent?.name || 'Assistant';
+            
+            let inputDisplay = '';
+            if (input && Object.keys(input).length > 0) {
+                inputDisplay = `
+                    <div class="tool-details">
+                        <strong>Tool Input:</strong>
+                        <div class="tool-input">${JSON.stringify(input, null, 2)}</div>
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-header" style="color: #f59e0b">
+                    🔧 ${displayName} • ${timestamp}
+                </div>
+                <div>
+                    <strong>Using tool:</strong> ${toolName}<br>
+                    <em>${description}</em>
+                    ${inputDisplay}
+                </div>
+            `;
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
         }
 
         // Helper function to convert hex to RGB

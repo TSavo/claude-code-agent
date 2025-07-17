@@ -139,7 +139,7 @@ app.get('/api/agents', (req, res) => {
     name,
     color: data.color,
     lastActivity: data.lastActivity,
-    sessionId: data.session ? data.session.sessionId.substring(0, 8) : 'pending'
+    sessionId: data.session ? data.session.sessionId.substring(0, 8) : 'restored'
   }));
   res.json(agentList);
 });
@@ -163,16 +163,15 @@ app.post('/api/agents', async (req, res) => {
     };
     agents.set(name, agentData);
     
-    // Event handler to capture initial response
+    // Event handler to capture all streaming events
     const eventHandler = (event) => {
-      console.log('Agent creation event:', JSON.stringify(event, null, 2));
+      console.log('Agent event:', JSON.stringify(event, null, 2));
+      
       if (event.type === 'process_output' && event.data && event.data.content) {
         const response = event.data.content
           .filter(item => item.type === 'text')
           .map(item => item.text)
           .join('');
-        
-        console.log('Extracted response:', response);
         
         if (response.trim()) {
           // Add to chat history
@@ -188,10 +187,19 @@ app.post('/api/agents', async (req, res) => {
             type: 'message',
             agent: name,
             content: response,
-            user_message: `Created agent: ${name}`,
             color: agentData.color
           });
         }
+      } else if (event.type === 'tool_use') {
+        // Broadcast tool use events
+        broadcastToAllClients({
+          type: 'tool_use',
+          agent: name,
+          tool_name: event.data.name,
+          description: event.data.description,
+          input: event.data.input,
+          color: agentData.color
+        });
       }
     };
     
@@ -315,25 +323,50 @@ app.post('/api/message/:agentName', async (req, res) => {
       agent: agentName
     });
     
-    // Send the message and get response
-    const response = await sessionManager.resumeAgent(agentName, message);
+    // Event handler for streaming events during conversation
+    const eventHandler = (event) => {
+      console.log('Message event:', JSON.stringify(event, null, 2));
+      
+      if (event.type === 'process_output' && event.data && event.data.content) {
+        const response = event.data.content
+          .filter(item => item.type === 'text')
+          .map(item => item.text)
+          .join('');
+        
+        if (response.trim()) {
+          // Broadcast incremental responses
+          broadcastToAllClients({
+            type: 'message',
+            agent: agentName,
+            content: response,
+            color: agent.color
+          });
+        }
+      } else if (event.type === 'tool_use') {
+        // Broadcast tool use events
+        broadcastToAllClients({
+          type: 'tool_use',
+          agent: agentName,
+          tool_name: event.data.name,
+          description: event.data.description,
+          input: event.data.input,
+          color: agent.color
+        });
+      }
+    };
     
-    // Add assistant response to chat history
-    addToChatHistory({
-      type: 'assistant',
-      agent: agentName,
-      content: response.result,
-      color: agent.color
-    });
+    // Send the message and get response with streaming
+    const response = await sessionManager.resumeAgent(agentName, message, eventHandler);
     
-    // Broadcast to all connected clients
-    broadcastToAllClients({
-      type: 'message',
-      agent: agentName,
-      content: response.result,
-      user_message: message,
-      color: agent.color
-    });
+    // Add assistant response to chat history (if not already added by streaming)
+    if (response.result && response.result.trim()) {
+      addToChatHistory({
+        type: 'assistant',
+        agent: agentName,
+        content: response.result,
+        color: agent.color
+      });
+    }
     
     agent.lastActivity = new Date();
     
