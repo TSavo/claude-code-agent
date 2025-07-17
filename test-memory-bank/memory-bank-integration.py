@@ -104,10 +104,15 @@ async def store_conversation_data(claude_session_id: str, message_type: str, con
             )
         )
         
-        # Append event to session
-        sessions_client.append_event(name=session_name, event=event)
+        # Append event to session with detailed logging
+        print(f"🧠 Memory Bank: Storing {message_type} message", file=sys.stderr)
+        print(f"🧠 Memory Bank: Session: {session_name}", file=sys.stderr)
+        print(f"🧠 Memory Bank: Content preview: {formatted_content[:100]}...", file=sys.stderr)
         
-        print(f"💾 Stored {message_type} in Memory Bank session {memory_session_id}", file=sys.stderr)
+        result = sessions_client.append_event(name=session_name, event=event)
+        
+        print(f"💾 Successfully stored {message_type} in Memory Bank session {memory_session_id}", file=sys.stderr)
+        print(f"💾 Event stored with author: {event.author}, role: {event.content.role}", file=sys.stderr)
         
         return True
         
